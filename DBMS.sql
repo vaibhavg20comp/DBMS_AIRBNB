@@ -118,9 +118,10 @@ CREATE TABLE `user` (
   `phone` char(14) NOT NULL,
   `numOfRatings` int DEFAULT NULL,
   `avgRating` decimal(2,1) DEFAULT NULL,
-  `role` binary(1) NOT NULL,
-  PRIMARY KEY (`user_id`,`role`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `password` varchar(100) NOT NULL,
+  `role` bit(1) NOT NULL,
+  PRIMARY KEY (`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -129,6 +130,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
+INSERT INTO `user` VALUES (1,'curiyash','Yash','S','Suryawanshi','2002-04-19','curiyash19@gmail.com','+91-7350087579',NULL,NULL,'password',_binary '');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -165,4 +167,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-10-23 10:36:49
+-- Dump completed on 2022-10-23 12:06:32
