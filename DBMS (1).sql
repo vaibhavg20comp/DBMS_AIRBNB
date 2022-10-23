@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.29, for Linux (x86_64)
 --
--- Host: localhost    Database: airbnb
+-- Host: localhost    Database: airbnb2
 -- ------------------------------------------------------
 -- Server version	8.0.30-0ubuntu0.22.04.1
 
@@ -14,31 +14,6 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `admin`
---
-
-DROP TABLE IF EXISTS `admin`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `admin` (
-  `admin_id` char(36) NOT NULL,
-  `firstname` varchar(128) NOT NULL,
-  `middlename` varchar(128) DEFAULT NULL,
-  `lastname` varchar(128) NOT NULL,
-  PRIMARY KEY (`admin_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `admin`
---
-
-LOCK TABLES `admin` WRITE;
-/*!40000 ALTER TABLE `admin` DISABLE KEYS */;
-/*!40000 ALTER TABLE `admin` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `image`
@@ -65,49 +40,25 @@ LOCK TABLES `image` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `moderates`
+-- Table structure for table `property2`
 --
 
-DROP TABLE IF EXISTS `moderates`;
+DROP TABLE IF EXISTS `property2`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `moderates` (
-  `admin_id` char(36) NOT NULL,
-  `property_id` char(36) NOT NULL,
-  `status` bit(1) DEFAULT NULL,
-  PRIMARY KEY (`admin_id`,`property_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `moderates`
---
-
-LOCK TABLES `moderates` WRITE;
-/*!40000 ALTER TABLE `moderates` DISABLE KEYS */;
-/*!40000 ALTER TABLE `moderates` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `property`
---
-
-DROP TABLE IF EXISTS `property`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `property` (
+CREATE TABLE `property2` (
   `property_id` char(36) NOT NULL,
   PRIMARY KEY (`property_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `property`
+-- Dumping data for table `property2`
 --
 
-LOCK TABLES `property` WRITE;
-/*!40000 ALTER TABLE `property` DISABLE KEYS */;
-/*!40000 ALTER TABLE `property` ENABLE KEYS */;
+LOCK TABLES `property2` WRITE;
+/*!40000 ALTER TABLE `property2` DISABLE KEYS */;
+/*!40000 ALTER TABLE `property2` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -130,11 +81,11 @@ CREATE TABLE `review_guest_property` (
   `modified_time` datetime NOT NULL,
   `comment` mediumtext NOT NULL,
   PRIMARY KEY (`guest_id`,`property_id`,`image_id`),
-  KEY `image_id` (`image_id`),
   KEY `property_id` (`property_id`),
+  KEY `image_id` (`image_id`),
   CONSTRAINT `review_guest_property_ibfk_1` FOREIGN KEY (`guest_id`) REFERENCES `user` (`user_id`),
-  CONSTRAINT `review_guest_property_ibfk_2` FOREIGN KEY (`image_id`) REFERENCES `image` (`image_id`),
-  CONSTRAINT `review_guest_property_ibfk_3` FOREIGN KEY (`property_id`) REFERENCES `property` (`property_id`)
+  CONSTRAINT `review_guest_property_ibfk_2` FOREIGN KEY (`property_id`) REFERENCES `property2` (`property_id`),
+  CONSTRAINT `review_guest_property_ibfk_3` FOREIGN KEY (`image_id`) REFERENCES `image` (`image_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -165,8 +116,8 @@ CREATE TABLE `review_host_guest` (
   `modified_time` datetime NOT NULL,
   PRIMARY KEY (`reviewer_user_id`,`reviewer_role`,`reviewee_user_id`,`reviewee_role`),
   KEY `reviewee_user_id` (`reviewee_user_id`,`reviewee_role`),
-  CONSTRAINT `review_host_guest_ibfk_1` FOREIGN KEY (`reviewer_user_id`, `reviewer_role`) REFERENCES `user` (`user_id`, `role`),
-  CONSTRAINT `review_host_guest_ibfk_2` FOREIGN KEY (`reviewee_user_id`, `reviewee_role`) REFERENCES `user` (`user_id`, `role`)
+  CONSTRAINT `review_host_guest_ibfk_1` FOREIGN KEY (`reviewer_user_id`, `reviewer_role`) REFERENCES `user_role` (`user_id`, `role`),
+  CONSTRAINT `review_host_guest_ibfk_2` FOREIGN KEY (`reviewee_user_id`, `reviewee_role`) REFERENCES `user_role` (`user_id`, `role`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -198,8 +149,7 @@ CREATE TABLE `user` (
   `numOfRatings` int DEFAULT NULL,
   `avgRating` decimal(2,1) DEFAULT NULL,
   `password` varchar(100) NOT NULL,
-  `role` bit(1) NOT NULL,
-  PRIMARY KEY (`user_id`,`role`)
+  PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -210,6 +160,29 @@ CREATE TABLE `user` (
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `user_role`
+--
+
+DROP TABLE IF EXISTS `user_role`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `user_role` (
+  `user_id` char(36) NOT NULL,
+  `role` bit(1) NOT NULL,
+  PRIMARY KEY (`user_id`,`role`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `user_role`
+--
+
+LOCK TABLES `user_role` WRITE;
+/*!40000 ALTER TABLE `user_role` DISABLE KEYS */;
+/*!40000 ALTER TABLE `user_role` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -227,7 +200,7 @@ CREATE TABLE `wishlist` (
   KEY `guest_id` (`guest_id`),
   KEY `property_id` (`property_id`),
   CONSTRAINT `wishlist_ibfk_1` FOREIGN KEY (`guest_id`) REFERENCES `user` (`user_id`),
-  CONSTRAINT `wishlist_ibfk_2` FOREIGN KEY (`property_id`) REFERENCES `property` (`property_id`)
+  CONSTRAINT `wishlist_ibfk_2` FOREIGN KEY (`property_id`) REFERENCES `property2` (`property_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -249,4 +222,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-10-23 13:14:13
+-- Dump completed on 2022-10-23 13:14:20
