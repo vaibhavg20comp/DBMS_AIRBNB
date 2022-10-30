@@ -5,6 +5,7 @@ const app = express();
 const mysql = require('mysql');
 const bcrypt = require("bcrypt");
 const uuid = require('uuid');
+require('dotenv').config()
 
 const saltRounds = 10;
 
@@ -27,29 +28,33 @@ let connection = mysql.createConnection({
 app.post("/api/login", (req,res) => {
     const username = req.body.username;
     const password = req.body.password;
+    console.log(username, password);
 
-    const query = `select username from user where username=${username} and password=${password}`;
+    const query = `select user_id,username,isHost from user where username=`+mysql.escape(username)+`and password=`+mysql.escape(password)+`;`;
     console.log(query);
 
     connection.query(query, (err, result) => {
         if (err || result.length==0){
             res.send({'status': false})
         }
-        console.log(result[0].isHost);
-        let data = {
-            username: result[0].username,
-            isHost: result[0].isHost
-        }
-        res.send({'status': true, 'data': data})
+        res.send({'status': true, 'user_id': result[0].user_id, 'username': result[0].username,'isHost': result[0].isHost})
     })
 })
 
 app.post("/api/signup", (req,res) => {
-    const data = req.body.data;
+    const user_id = req.body.user_id;
+    const username = req.body.username;
+    const password = req.body.password;
+    const email = req.body.email;
+    const phone = req.body.phone;
+    const firstname = req.body.firstname;
+    const middlename = req.body.middlename;
+    const lastname = req.body.lastname;
+    const dob = req.body.dob;
 
     bcrypt.genSalt(saltRounds, (err, salt) => {
-        bcrypt.hash(data.password, salt, (err, hash) => {
-            const query = `insert into user(user_id,username,firstname,middlename,lastname,dob,email,phone,password,isHost) values (${data.user_id},${data.username},${data.firstname},${data.middlename},${data.lastname},${data.dob},${data.email},${data.phone},${hash},${data.isHost});`;
+        bcrypt.hash(password, salt, (err, hash) => {
+            const query = `insert into user(\`user_id\`,\`username\`,\`firstname\`,\`middlename\`,\`lastname\`,\`dob\`,\`email\`,\`phone\`,\`password\`,\`isHost\`) values ("${user_id}","${username}","${firstname}","${middlename}","${lastname}",DATE "${dob}","${email}","${phone}","${hash}",b'1');`;
             connection.query(query,function(err,result){
                 if(err){
                 console.log(err);
@@ -63,6 +68,6 @@ app.post("/api/signup", (req,res) => {
     })
 })
 
-app.listen(4200, () =>{
-    console.log("Running on the Port 4200!");
+app.listen(3001, () =>{
+    console.log("Running on the Port 3001!");
 });
