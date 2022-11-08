@@ -1,0 +1,17 @@
+View for home page cards
+select    images[]:
+          HostName:
+          Rating:
+          place name : town city country
+          check-in checkout time
+          price per night  
+from the database for a property
+
+query : 
+select p.property_id,p.price_per_night,p.av_from_date,p.av_to_date,
+i.image_id,i.image_url,a.city,a.country
+from property p
+join property_has_images i
+on p.property_id = i.property_id
+join address a
+on p.addr_id = a.addr_id;
