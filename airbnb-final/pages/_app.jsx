@@ -7,7 +7,7 @@ import Router from 'next/router';
 import { AppProps } from 'next/app';
 
 import '../styles/reactDateRange.css';
-
+import '../styles/carousel.css';
 
 const progressBar = new ProgressBar({
   size: 4,
