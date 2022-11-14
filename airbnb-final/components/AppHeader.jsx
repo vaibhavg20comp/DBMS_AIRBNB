@@ -136,7 +136,7 @@ function AppHeader({exploreNearby,searchPage,query}) {
                     </div>
                     {/* Right side navigation */}
                     <div className="flex items-center justify-end">
-                        <Link href="/hosting/becomeHost" legacyBehavior>
+                        <Link href="/hosting/propertyTypeGroup" legacyBehavior>
                         <a
                             className={`${
                             isSnapTop

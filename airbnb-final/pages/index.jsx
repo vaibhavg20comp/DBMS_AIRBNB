@@ -7,7 +7,6 @@ import styles from '../styles/Home.module.css'
 import AppHeader from '../components/AppHeader'
 import Hero from '../components/Hero'
 import AppSection from '../components/AppSection'
-
 import TestCard from '../components/TestCard'
 
 export default function Home() {

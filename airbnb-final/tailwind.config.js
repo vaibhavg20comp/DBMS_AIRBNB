@@ -1,3 +1,4 @@
+const { ColorSwatchIcon } = require('@heroicons/react/outline');
 const colors = require('tailwindcss/colors');
 
 module.exports = {
@@ -32,6 +33,8 @@ module.exports = {
       indigo: colors.indigo,
       red: colors.rose,
       yellow: colors.amber,
+      purple:colors.purple,
+      pink:colors.pink,
       gray: {
         100: '#F7F7F7',
         200: '#DDDDDD',
@@ -39,6 +42,7 @@ module.exports = {
         400: '#484848',
         500: '#222222',
       },
+      grayish:'rgba(221,221,221,255)',
       primary: '#FF385C',
       'transparent-black': 'rgba(0,0,0,0.4)',
     },
