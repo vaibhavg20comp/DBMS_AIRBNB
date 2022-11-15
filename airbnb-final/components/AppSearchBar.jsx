@@ -27,8 +27,6 @@ const  ESearchMenu =  {
   GUESTS : 'guests',
 }
 
-
-
 const AppSearchBar = ({
   menu,
   isActiveHeader,
