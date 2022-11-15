@@ -5,7 +5,8 @@ import {StarIcon} from "@heroicons/react/solid"
 import { ST } from 'next/dist/shared/lib/utils';
 import { useRouter } from 'next/navigation';
 
-function InfoCard(item) {
+function InfoCard({item, show}) {
+    console.log(show);
     const router=useRouter();
     function goToProp(){
         console.log('11: heya')
@@ -39,9 +40,9 @@ function InfoCard(item) {
                     <p className='text-lg lg:text-2xl pd-2'>
                      ₹ {item.item.price_per_night} / night
                     </p>
-                    <p className='text-right font-extralight'>
+                    {show==='undefined' && <p className='text-right font-extralight'>
                      ₹ {item.item.price_per_night*item.item.noOfDays} total
-                    </p>
+                    </p>}
                 </div>
             </div>
         </div>
