@@ -198,7 +198,22 @@ app.post("/addRemoveWishlist",async (req,res)=>{
 			res.send({'status':'Done'})
 		})
 	}
-	
+})
+
+app.post("/getWishlist", (req, res) => {
+	const user_id = req.body.user_id;
+	const props = `select property.*,address.* from wishlist join property on property.property_id=wishlist.property_id join address on address.addr_id=property.addr_id where wishlist.guest_id="${user_id}"`;
+	db.query(props, (err, results) => {
+		if (err){
+			res.send({'status': false});
+		} else{
+			if (results==='undefined' || results.length===0){
+				res.send({'status': true, props: []});
+			} else{
+				res.send({'status': true, props: [...results]})
+			}
+		}
+	})
 })
 app.post("/confirmBooking",async (req,res)=>{
 	const uid=req.body.user_id;
@@ -306,6 +321,40 @@ app.get("/searchResults",async(req,res)=>{
 		}
 		console.log(properties)
 		res.send(properties)
+	})
+})
+
+app.post("/getHostedProps", (req, res) => {
+	const user_id = req.body.user_id;
+	const props = `select property.* from has_property join property on has_property.property_id=property.property_id where has_property.user_id="${user_id}"`;
+	db.query(props, (err, results) => {
+		console.log(results);
+		if (err){
+			res.send({"status": false})
+		} else{
+			if (results==='undefined' && results?.length===0){
+				res.send({status: true, props: []});
+			} else{
+				res.send({status: true, props: [...results]})
+			}
+		}
+	})
+})
+
+app.post("/getBookedProps", (req, res) => {
+	const user_id = req.body.user_id;
+	const props = `select property.*,address.* from book join property on book.property_id=property.property_id join address on property.addr_id=address.addr_id where book.guest_id="${user_id}"`;
+	db.query(props, (err, results) => {
+		if (err){
+			console.log(err);
+			res.send({"status": false})
+		} else{
+			if (results==='undefined' && results?.length===0){
+				res.send({status: true, props: []});
+			} else{
+				res.send({status: true, props: [...results]})
+			}
+		}
 	})
 })
 

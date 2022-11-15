@@ -6,7 +6,7 @@ import { ST } from 'next/dist/shared/lib/utils';
 import { useRouter } from 'next/navigation';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import Axios from "axios";
-function InfoCard(item) {
+function InfoCard({item, show}) {
     const [cIndex,setCIndex]=useState(0);
     const color=['gray','red']
     const router=useRouter();
@@ -15,7 +15,7 @@ function InfoCard(item) {
         router.push({
             pathname: '/property',
             query:{
-                property_id:item.item.property_id
+                property_id:item.property_id
             }
         })
     }
@@ -28,7 +28,7 @@ function InfoCard(item) {
         }
         Axios.post("http://localhost:3003/addRemoveWishlist",{
             user_id:user_id,
-            property_id:item.item.property_id,
+            property_id:item.property_id,
             state:cIndex
         }).then((response)=>{
             console.log(response.data)
@@ -46,26 +46,26 @@ function InfoCard(item) {
         </div>
         <div className='flex flex-col flex-grow pl-5'>
             <div className='flex justify-between'>
-                <p>In {item.item.city}, {item.item.country}</p>
+                <p>In {item.city}, {item.country}</p>
                 <FavoriteIcon onClick={changeColor} sx={{"&:hover":{color:"red"},color:color[cIndex]}} className='h-7 cursor-pointer'/>
             </div>
             <div onClick={goToProp}>
-            <h4 className='text-xl'>{item.item.property_name}</h4>
+            <h4 className='text-xl'>{item.property_name}</h4>
             <div className='border-b w-10 pt-2'/>
 
-            <p className='pt-2 text-sm text-gray-500 flex-grow'>{item.item.description}</p>
+            <p className='pt-2 text-sm text-gray-500 flex-grow'>{item.description}</p>
 
-            <div className='flex justify-between items-end pt-5'>
+            <div className='flex justify-between items-end pt-10'>
                 <p className='flex items-center'>
                     <StarIcon className='h-5 text-red-400'/>4.5
                 </p>
                 <div>
                     <p className='text-lg lg:text-2xl pd-2'>
-                     ₹ {item.item.price_per_night} / night
+                     ₹ {item.price_per_night} / night
                     </p>
-                    <p className='text-right font-extralight'>
-                     ₹ {item.item.price_per_night*item.item.noOfDays} total
-                    </p>
+                    {show===true && <p className='text-right font-extralight'>
+                     ₹ {item.price_per_night*item.noOfDays} total
+                    </p>}
                 </div>
             </div>
             </div>
