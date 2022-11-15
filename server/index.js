@@ -176,7 +176,29 @@ var getDaysArray=function(start,end,arr){
 	return arr;
 }
 
-
+app.post("/addRemoveWishlist",async (req,res)=>{
+	const user_id=req.body.user_id;
+	const property_id=req.body.property_id;
+	const state=req.body.state;
+	console.log(user_id,property_id,state)
+	const query1=`insert into wishlist (guest_id,property_id) values ('${user_id}','${property_id}')`
+	const query2=`delete from wishlist where guest_id='${user_id}' and property_id='${property_id}'`
+	if(state===0){
+		const result=(await db2).query(query1);
+		result.then(function(result){
+			console.log(result[0])
+			res.send({'status':'Done'})
+		})
+	}
+	else{
+		const result=(await db2).query(query2);
+		result.then(function(result){
+			console.log(result[0]);
+			res.send({'status':'Done'})
+		})
+	}
+	
+})
 
 async function showProp(){
 	const query=`SELECT p.property_id,p.price_per_night,p.av_from_date,p.av_to_date,i.images,a.city,a.country 
