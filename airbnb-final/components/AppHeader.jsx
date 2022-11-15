@@ -178,7 +178,7 @@ function AppHeader({exploreNearby,searchPage,query,user_info,color}) {
                             <GlobeAltIcon className="h-5" />
                         </a>
                         </Link>
-                        <button className="flex items-center pl-3 pr-1 bg-white border border-gray-200 rounded-full h-11 hover:shadow-md">
+                        <button className="flex items-center pl-3 pr-1 bg-white border border-gray-200 rounded-full h-11 hover:shadow-md" onClick={(e) => router.push('/user')}>
                         {/* <MenuIcon className="h-5 mr-2 text-gray-300" />
                         <UserCircleIcon className="h-10 text-gray-300" /> */}
                             Hello {user?.firstname}

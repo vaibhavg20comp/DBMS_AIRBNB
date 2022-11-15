@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Button from '@mui/material/Button';
-import Modal from 'react-bootstrap/Modal';
+import { Modal } from 'react-bootstrap';
 
 function SubmitModal({confirm,cancel,isVisible,property_title,checkIn,checkOut,rate,guests,noOfDays}) {
   if (!isVisible) return null;
