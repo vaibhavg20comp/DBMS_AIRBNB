@@ -1,4 +1,4 @@
-import React, {useState,useEffect} from 'react'
+import React, {useState,useEffect, useContext} from 'react'
 import Link from 'next/link';
 import { GlobeAltIcon, LogoutIcon, MenuIcon, SearchIcon } from '@heroicons/react/outline';
 import { UserCircleIcon } from '@heroicons/react/solid';
@@ -10,8 +10,11 @@ import {formatRangeDate} from '../utils/dateUtils';
 import AppHeaderOption from './AppHeaderOption';
 import AppSearchBar from './AppSearchBar';
 import { useRouter } from 'next/navigation';
+import { UserContext } from '../pages/_app';
 
 function AppHeader({exploreNearby,searchPage,query,user_info,color}) {
+    
+    const [user,setUser]=useState('');
     const router = useRouter();
     const [isSnapTop, setIsSnapTop] = useState(searchPage===false ? false : true);
     console.log(searchPage);
@@ -40,6 +43,9 @@ function AppHeader({exploreNearby,searchPage,query,user_info,color}) {
         return style.join(' ');
     };
     useEffect(() => {
+        if (typeof window!=='undefined'){
+            setUser(JSON.parse(sessionStorage.getItem('user_info')))
+        }
         // listen to scroll
         if (!searchPage) {
           window.addEventListener('scroll', handleOnScroll);
@@ -175,7 +181,7 @@ function AppHeader({exploreNearby,searchPage,query,user_info,color}) {
                         <button className="flex items-center pl-3 pr-1 bg-white border border-gray-200 rounded-full h-11 hover:shadow-md">
                         {/* <MenuIcon className="h-5 mr-2 text-gray-300" />
                         <UserCircleIcon className="h-10 text-gray-300" /> */}
-                            Hello {user_info.firstname}
+                            Hello {user.firstname}
                         </button>
                         <button className="flex items-center pl-3 pr-1 bg-white border border-gray-200 rounded-full h-11 hover:shadow-md" onClick={(e) => {logout()}}>
                         {/* <MenuIcon className="h-5 mr-2 text-gray-300" />

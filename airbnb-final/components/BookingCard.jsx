@@ -1,5 +1,5 @@
 import { Card,Typography,CardContent,CardActions,Button } from "@mui/material";
-import React, {  useContext, useState } from 'react';
+import React, {  useContext, useEffect, useState } from 'react';
 
 import { useRouter } from 'next/router';
 // components
@@ -20,6 +20,7 @@ import { EHeaderOptions } from '../utils/Enums';
 // utils
 import { formatCheckDate, formatRangeDate } from '../utils/dateUtils';
 import { formatGuests } from '../utils/guestUtils';
+import Axios from "axios";
 
 const  ESearchMenu =  {
     LOCATION : 'location',
@@ -28,7 +29,7 @@ const  ESearchMenu =  {
     GUESTS : 'guests',
 }
 
-export default function BookingCard(){
+export default function BookingCard({property_id}){
     const [searchMenu, setSearchMenu] = useState(null);
   // data
   const [{ location, checkIn, checkOut, guests }, dispatch] = useDataContext() ;
@@ -58,6 +59,23 @@ export default function BookingCard(){
     event.preventDefault();
   };
 
+  const [disabledDates, setDisabledDates] = useState([]);
+
+  useEffect(() => {
+    Axios.post("http://localhost:3003/getBookedDates", {
+        property_id: property_id,
+    })
+    .then((response) => {
+        response.data.forEach((dateString) => {
+            setDisabledDates(prev => {
+                return [...prev, new Date(dateString)]
+            })
+        })
+    })
+  },[])
+
+  console.log(disabledDates);
+
   const dateRangeStyle ='left-4 right-4 searchbar:left-auto searchbar:right-1/2 searchbar:translate-x-1/2 searchbar:w-[850px]';
     return (
         <>
@@ -80,7 +98,7 @@ export default function BookingCard(){
                     >
                     {/* date picker */}
                         <AppSearchOptionWrapper className={dateRangeStyle}>
-                            {searchMenu === ESearchMenu.CHECK_IN && <AppDateRange />}
+                            {searchMenu === ESearchMenu.CHECK_IN && <AppDateRange disabledDates={disabledDates}/>}
                         </AppSearchOptionWrapper>
                     </AppSearchOptionButton>
                     {/* check out */}
@@ -96,7 +114,7 @@ export default function BookingCard(){
                     >
                     {/* date picker */}
                     <AppSearchOptionWrapper className={dateRangeStyle}>
-                        {searchMenu === ESearchMenu.CHECK_OUT && <AppDateRange />}
+                        {searchMenu === ESearchMenu.CHECK_OUT && <AppDateRange disabledDates={disabledDates}/>}
                     </AppSearchOptionWrapper>
                     </AppSearchOptionButton>
                     {/* Guests */}

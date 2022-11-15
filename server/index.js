@@ -1,32 +1,36 @@
-const express = require('express');
-const bodyParser = require('body-parser')
-const cors = require('cors')
-const app = express();
-const mysql = require('mysql');
+const express= require('express');
+const app=express();
+const bodyParser = require('body-parser');
+const cors=require('cors');
 const bcrypt = require("bcrypt");
 const { reset } = require('nodemon');
-
-require("dotenv").config()
-
 app.use(cors());
 app.use(bodyParser.json());
-const propertyData = {
-	property_id:null,
-	price_per_night:null,
-	av_from_date:null,
-	av_to_date:null,
-	images:[]
-};
-
+// const propertyData = {
+// 	property_id:null,
+// 	price_per_night:null,
+// 	av_from_date:null,
+// 	av_to_date:null,
+// 	images:[]
+// };
 const saltRounds = 10;
-
+const mysql=require('mysql');
 const db=mysql.createConnection({
 	host:'localhost',
-        database:process.env.DATABASE,
+	database:'airbnb_dbms',
+	user:'root',
+	password:'Div3daj$',
+	socketPath:'/var/run/mysqld/mysqld.sock',
+	timezone: 'Z',
+});
+
+const mysql2 =require('mysql2/promise');
+const db2=mysql2.createConnection({
+	host:'localhost',
+        database:'airbnb_dbms',
         user:'root',
-        password:process.env.PASSWORD,
-        socketPath:'/var/run/mysqld/mysqld.sock',
-		timezone: 'Z',
+        password:'Div3daj$',
+		timezone: 'Z'
 });
 
 app.post("/api/login", (req,res) => {
@@ -118,6 +122,7 @@ app.post("/api/signup", (req,res) => {
 								res.send({'status': 'No'});
 							})
 						} else{
+							console.log('yaya')
 							res.send({'status': true});
 						}
 					})
@@ -128,14 +133,36 @@ app.post("/api/signup", (req,res) => {
 })
 
 app.post("/api/property_info", (req,res) => {
+	console.log("136:",req.body)
 	const property_id = req.body.property_id;
 	const info = `select property.*,user.*,address.city,address.state,address.country from property join has_property on has_property.property_id=property.property_id join user on user.user_id=has_property.user_id join address on address.addr_id=property.addr_id where property.property_id="${property_id}";`;
+	console.log(info);
 	db.query(info, (err, result) => {
+		console.log(result[0]);
 		if (err){
 			res.send({'status': false})
 		} else{
 			res.send(result[0])
 		}
+	})
+})
+
+// async function getBookings(property_id){
+// 	const query=`select * from book join booking on book.booking_id=booking.booking_id where property_id='${property_id}'`
+// 	const rows=(await db2).query(query);
+// 	return rows;
+// }
+
+app.post("/getBookedDates", async (req, res) => {
+	const property_id = req.body.property_id;
+	const data = getBookings(property_id);
+	let bookedDates = [];
+	await data.then(async (results) => {
+		for (let i=0; i<results[0].length; i++){
+			bookedDates = await getDaysArray(results[0][i].check_in_date, results[0][i].check_out_date, bookedDates);
+		}
+		console.log(bookedDates);
+		res.send(bookedDates)
 	})
 })
 
@@ -146,6 +173,25 @@ var getDaysArray=function(start,end,arr){
 	return arr;
 }
 
+
+
+async function showProp(){
+	const query=`SELECT p.property_id,p.price_per_night,p.av_from_date,p.av_to_date,i.images,a.city,a.country 
+	from property p
+	JOIN (SELECT property_id,JSON_EXTRACT(JSON_ARRAYAGG(JSON_OBJECT('image_id',image_id,'url',image_url)),'$') as images from property_has_images group by property_id) as i
+	ON p.property_id=i.property_id
+	JOIN address a
+	ON p.addr_id = a.addr_id`;
+	const result=(await db2).query(query);
+	return result;
+}
+app.get('/showproperty',(req,res)=>{
+	const data=showProp();
+	data.then(function(result){
+		res.send(result[0])
+	})
+});
+
 app.post("/getAmenities", (req, res) => {
 	const property_id = req.body.property_id;
 	const amenities = `select amenity from has_amenity where property_id="${property_id}"`
@@ -155,57 +201,58 @@ app.post("/getAmenities", (req, res) => {
 	})
 })
 
-app.get("/searchResults",(req,res)=>{
-	const location="Pune";
-	const checkIn="2022-11-11";
-	const checkOut="2022-11-20";
+async function getAvailableProperty(location,checkIn,checkOut){
+	const query=`select * from property join address on property.addr_id=address.addr_id where city='${location}' and av_from_date<='${checkIn}' and av_to_date>='${checkOut}'`;
+	const rows=(await db2).query(query)
+	return rows;
+}
+async function getBookings(property_id){
+	const query=`select * from book join booking on book.booking_id=booking.booking_id where property_id='${property_id}'`
+	const rows=(await db2).query(query);
+	return rows;
+}
+async function getAmenities(property_id){
+	const query=`select amenity from has_amenity where property_id='${property_id}'`
+	const rows=(await db2).query(query);
+	return rows;
+}
+app.get("/searchResults",async(req,res)=>{
+	const location=req.query.location;
+	const checkIn=req.query.checkIn.split('T')[0];
+	const checkOut=req.query.checkOut.split('T')[0];
 	const wantedDate=new Set(getDaysArray(checkIn,checkOut,[]));
 	const noOfDays=wantedDate.size;
-	console.log(checkIn);
-	console.log(checkOut)
-	const query=`select * from property join address on property.addr_id=address.addr_id where city='${location}' and av_from_date<='${checkIn}' and av_to_date>='${checkOut}'`;
-	db.query(query,(err,results)=>{
-		console.log(results);
-		if(err){
-			console.log(err)
-		}
-		else{
-			let properties = [];
-			results=results.map(v=>Object.assign({},v));
-			for(var i=0;i<results.length;i++){
-				var totalAv=getDaysArray(results[i].av_from_date,results[i].av_to_date,[]);
-				console.log(totalAv);
-				var bookedDates=[];
-				var amenities=[];
-				const property_id=results[i].property_id;
-				const query2=`select * from book join booking on book.booking_id=booking.booking_id where property_id='${property_id}'`
-				db.query(query2,(e,r)=>{
-					console.log("-----");
-					console.log(r);
-					if(e){
-						console.log(e)
-					}
-					else{
-						for(var j=0;j<r.length;j++){
-							bookedDates=getDaysArray(r[j].check_in_date,r[j].check_out_date,bookedDates);
-						}
-						console.log("87:",amenities);
-						console.log("88:",bookedDates);
-						totalAv=new Set(totalAv);
-						var booked_dates=new Set(bookedDates);
-						totalAv=new Set([...totalAv].filter(x=>!booked_dates.has(x)))
-						console.log(totalAv);
-						temp=new Set([...totalAv].filter(x=>wantedDate.has(x)));
-						console.log("189:",temp);
-						if(temp.size>0){
-							properties.push({property_id,noOfDays,amenities})
-						}
-					}
-				})
+	const data1=getAvailableProperty(location,checkIn,checkOut);
+	var properties=[]
+	await data1.then(async function(results){
+		for(var i=0;i<results[0].length;i++){
+			var totalAv=getDaysArray(results[0][i].av_from_date,results[0][i].av_to_date,[]);
+			var bookedDates=[];
+			var amenities=[];
+			var data3=getAmenities(results[0][i].property_id);
+			await data3.then(async function(re){
+				for(var k=0;k<re[0].length;k++){
+					amenities.push(re[0][k].amenity);
+					// console.log("88:",amenities)
+				}
+			})
+			var data2=getBookings(results[0][i].property_id);
+			await data2.then(async function(r){
+				for(var j=0;j<r[0].length;j++){
+					bookedDates=await getDaysArray(r[0][j].check_in_date,r[0][j].check_out_date,bookedDates);
+				}
+			})
+			var booked_date=new Set(bookedDates);
+			var ta=new Set(totalAv);
+			ta=new Set([...ta].filter(x=>!booked_date.has(x)));
+			temp=new Set([...ta].filter(x=>wantedDate.has(x)));
+			if(temp.size){
+				properties.push({...results[0][i],noOfDays,amenities})
 			}
-			console.log("194:",properties)
 		}
-	})	
+		console.log(properties)
+		res.send(properties)
+	})
 })
 
 app.get('/showproperty',(req,res)=>{
@@ -233,6 +280,6 @@ app.get('/showproperty',(req,res)=>{
 	});
 });
 
-app.listen(Number(process.env.PORT),()=>{
-	console.log(`Server is running on port ${process.env.PORT}`);
+app.listen(3003,()=>{
+	console.log("Server is running on port 3003!!!!");
 })

@@ -36,7 +36,7 @@ function Amenity({amenities}){
 }
 
 function Test(){
-    Axios.get("http://localhost:3001/searchResults")
+    Axios.get("http://localhost:3003/searchResults")
     .then((response) => {
         console.log(response);
     })
@@ -47,7 +47,7 @@ export default function PropertyInfo({propertyInfo, property_id}){
     // const property_id = router.query.property_id;
     const [amenities, setAmenities] = useState([]);
     useEffect(() => {
-        Axios.post("http://localhost:3001/getAmenities", {
+        Axios.post("http://localhost:3003/getAmenities", {
             property_id: property_id,
         })
         .then((response) => {
@@ -103,7 +103,7 @@ export default function PropertyInfo({propertyInfo, property_id}){
                         </Grid>
                     </Grid>
                     <Grid container sx={{width: "40%"}}>
-                        <BookingCard />
+                        <BookingCard property_id={property_id}/>
                     </Grid>
                 </Grid>
             </Box>

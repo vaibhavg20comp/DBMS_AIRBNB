@@ -55,7 +55,7 @@ function Login() {
             alert("Please enter both the username and password")
             return
         }
-        Axios.post('http://localhost:3001/api/login', {
+        Axios.post('http://localhost:3003/api/login', {
             email: email,
             password: password
         })
