@@ -15,22 +15,24 @@ function TestCard() {
         fetchProperties();
     },[]);
     const handleChildElementClick = (e) => {
-        e.stopPropagation()
+        e.stopPropagation();
         // Do other stuff here
+        // Currently clicking on a carousel as well as next arrow we are redirected to the property page
+        //Since anchor tag is a parent div we have to disable this behaviour when we click on arrows.
     }
     const renderedProperties =Object.values(properties).map((property)=>{
 
         const images = JSON.parse(property.images);
 
         return (
-            <Link legacyBehavior key={property.property_id} href="#">
+            <Link legacyBehavior key={property.property_id} href="#!">
                 <a>
                 <div className="p-2 duration-300 lg:p-3 gap-y-4 active:scale-105 active:bg-gray-200 active:bg-opacity-40 rounded-xl">
                     <div className="relative w-full h-40 mb-2 md:h-60 lg:h-72">
                         <Carousel slide = {false}>
                             {
                                 images.map(img=>(
-                                    <img src={img.url} alt="..." className='carousel'/>
+                                    <img key= {img.image_id} src={img.url} alt="..." className='carousel'/>
                                 ))
                             }
                         </Carousel>

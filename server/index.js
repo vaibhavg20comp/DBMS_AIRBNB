@@ -5,13 +5,7 @@ const cors=require('cors');
 
 app.use(cors());
 app.use(bodyParser.json());
-const propertyData = {
-	property_id:null,
-	price_per_night:null,
-	av_from_date:null,
-	av_to_date:null,
-	images:[]
-};
+
 
 const mysql =require('mysql');
 const db=mysql.createConnection({
@@ -32,17 +26,18 @@ app.get('/showproperty',(req,res)=>{
 					on p.addr_id = a.addr_id`;
 	const query2= `SELECT p.property_id,p.price_per_night,p.av_from_date,p.av_to_date,i.images,a.city,a.country 
 				   from property p
-			       JOIN (SELECT property_id,JSON_EXTRACT(JSON_ARRAYAGG(JSON_OBJECT('image_id',image_id,'url',image_url)),'$') as images from property_has_images group by property_id) as i
+			       JOIN (SELECT property_id,JSON_ARRAYAGG(JSON_OBJECT('image_id',image_id,'url',image_url)) as images from property_has_images group by property_id) as i
 				   ON p.property_id=i.property_id
 				   JOIN address a
 				   ON p.addr_id = a.addr_id`;
-
+	const query3 = `select json_arrayagg(json_object('image',image_id)) as json from property_has_images`;
+	const query4=`SELECT JSON_ARRAY(1, "abc", NULL, TRUE, CURTIME()) as  newarray`;
 	db.query(query2,(err,results)=>{
 		if(err){
 			console.log(err);
 		}else{
-			console.log(results);
-			res.send(results);
+			var data = JSON.parse(JSON.stringify(results))
+			res.send(data);
 		}
 	});
 });
