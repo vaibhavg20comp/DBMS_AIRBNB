@@ -16,7 +16,7 @@ export default function PropertyImage({property_id, propertyName, city, state, c
                 <Typography variant="h2">
                     {propertyName}
                 </Typography>
-                <Grid container direction="row" spacing={5}>
+                <Grid container direction="row" spacing={5} sx={{paddingBottom: "10px"}}>
                     <Grid item>
                         Rating
                     </Grid>

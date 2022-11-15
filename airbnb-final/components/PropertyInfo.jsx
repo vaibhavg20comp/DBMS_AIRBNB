@@ -10,54 +10,9 @@ import Axios from "axios"
 import { Grid, Typography, Button } from '@mui/material';
 import BookingCard from './BookingCard';
 import {useRouter} from "next/router";
-
-function Amenity({amenities}){
-    return (
-        <>
-            {amenities.map((amenity) => {
-                return (
-                    <Grid container sx={{width: "80%"}} direction="row" alignItems={"center"} spacing={3}>
-                    <Grid item>
-                        Icon
-                    </Grid>
-                    <Grid item>
-                        <Grid item>
-                            {amenity.amenity}
-                        </Grid>
-                        <Grid item>
-                            {amenity.description}
-                        </Grid>
-                    </Grid>
-                    </Grid>
-                )
-            })}
-        </>
-    )
-}
-
-function Rule({rules}){
-    return (
-        <>
-            {rules.map((rule) => {
-                return (
-                    <Grid container sx={{width: "80%"}} direction="row" alignItems={"center"} spacing={3}>
-                    <Grid item>
-                        Icon
-                    </Grid>
-                    <Grid item>
-                        <Grid item>
-                            {rule.rule}
-                        </Grid>
-                        <Grid item>
-                            {rule.description}
-                        </Grid>
-                    </Grid>
-                    </Grid>
-                )
-            })}
-        </>
-    )
-}
+import PropertyTabs from './PropertyTabs';
+import { filters } from '/data/filters';
+import { iconMap } from '../utils/Enums';
 
 function Test(){
     Axios.get("http://localhost:3003/searchResults")
@@ -71,6 +26,7 @@ export default function PropertyInfo({propertyInfo, property_id}){
     // const property_id = router.query.property_id;
     const [amenities, setAmenities] = useState([]);
     const [rules,setRules] = useState([]);
+    const [isSSR, setIsSSR] = useState(true);
     useEffect(() => {
         Axios.post("http://localhost:3003/getAmenities", {
             property_id: property_id,
@@ -96,64 +52,70 @@ export default function PropertyInfo({propertyInfo, property_id}){
                 })
             })
         })
+        setIsSSR(false);
     },[])
 
-    return (
-        <>
-            <Box sx={{margin: "auto", width: "80%", borderStyle: "solid", borderRadius: "2px"}}>
-                {propertyInfo?.firstname!=="undefined" && 
-                <Typography variant="h4">
-                    Hosted by {propertyInfo.firstname}
-                </Typography>}
-                <Grid container direction="row" spacing={5}>
-                    <Grid item>
-                        Guests <br></br> {propertyInfo.max_occ}
-                    </Grid>
-                    <Grid item>
-                        Bedrooms <br></br> {propertyInfo.num_bedrooms}
-                    </Grid>
-                    <Grid item>
-                        Beds <br></br> {propertyInfo.num_beds}
-                    </Grid>
-                    <Grid item>
-                        Bathrooms <br></br>{propertyInfo.num_bathroom}
-                    </Grid>
-                </Grid>
-                <Grid
-                    container
-                    direction="row"
-                    spacing={2}
-                >
-                    <Grid item sx={{width: "60%"}}>
-                        {amenities.length!==0 && 
-                        <>
+    if (isSSR){
+        return
+    } else{
+        return (
+            <>
+                <Box sx={{margin: "auto", width: "80%", borderStyle: "solid", borderRadius: "2px"}}>
+                    {propertyInfo?.firstname!=="undefined" && 
+                    <Typography variant="h4">
+                        Hosted by {propertyInfo.firstname}
+                    </Typography>}
+                    <Grid container direction="row" spacing={5}>
+                        <Grid item direction="column" sx={{textAlign: 'center', marginLeft: '2px'}}>
                             <Grid item>
-                                <Typography variant="h5">
-                                    Amenities
-                                </Typography>
+                                Guests
                             </Grid>
-                            <Grid item direction="column">
-                                <hr></hr>
-                                <Amenity amenities={amenities}/>
-                                <hr></hr>
+                            <Grid>
+                                {propertyInfo.max_occ}
                             </Grid>
-                        </>}
-                        <Grid item>
-                            <Typography variant="h5" sx={{textDecoration: "underline"}}>Property Description</Typography>
-                           {propertyInfo.description}
                         </Grid>
-                        <Grid item>
-                            <Typography variant="h5" sx={{textDecoration: "underline"}}>House Rules</Typography>
-                            <hr></hr>
-                            <Rule rules={rules}/>
-                            <hr></hr>
+                        <Grid item direction="column" sx={{textAlign: 'center'}}>
+                            <Grid item>
+                                Bedrooms
+                            </Grid>
+                            <Grid item>
+                                {propertyInfo.num_bedrooms}
+                            </Grid>
+                        </Grid>
+                        <Grid item direction="column" sx={{textAlign: 'center'}}>
+                            <Grid item>
+                                Beds
+                            </Grid>
+                            <Grid item>
+                                {propertyInfo.num_beds}
+                            </Grid>
+                        </Grid>
+                        <Grid item direction="column"sx={{textAlign: 'center'}}>
+                            <Grid item>
+                                Bathrooms
+                            </Grid>
+                            <Grid item>
+                                {propertyInfo.num_bathroom}
+                            </Grid>
                         </Grid>
                     </Grid>
-                    <Grid container sx={{width: "40%"}}>
-                        <BookingCard property_id={property_id}/>
+                    <Grid
+                        container
+                        direction="row"
+                        spacing={5}
+                        justifyContent={"space-around"}
+                    >
+                        <Grid item sx={{width: "60%", minHeight: "420px"}}>
+                            <Grid item>
+                                <PropertyTabs description={propertyInfo.description} amenities={amenities} rules={rules}/>
+                            </Grid>
+                        </Grid>
+                        <Grid item sx={{width: "40%"}}>
+                            <BookingCard property_id={property_id}/>
+                        </Grid>
                     </Grid>
-                </Grid>
-            </Box>
-        </>
-    )
+                </Box>
+            </>
+        )
+    }
 }

@@ -18,6 +18,7 @@ import MicrowaveIcon from '@mui/icons-material/Microwave';
 import HeatPumpIcon from '@mui/icons-material/HeatPump';
 import YardIcon from '@mui/icons-material/Yard';
 import DeckIcon from '@mui/icons-material/Deck';
+
 export const filters=[
     {id:1, label:'Pool',icon:<PoolIcon size={24}/>},
     {id:2, label:'Free Parking',icon:<GarageIcon size={24}/>},
@@ -39,5 +40,4 @@ export const filters=[
     {id:18, label:'Heater',icon:<HeatPumpIcon size={24}/>},
     {id:19, label:'Garden',icon:<YardIcon size={24}/>},
     {id:20, label:'Deck',icon:<DeckIcon size={24}/>},
-
 ]
