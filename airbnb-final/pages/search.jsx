@@ -96,7 +96,7 @@ function search({searchResults}){
                 </Container>
                 <div className="flex flex-col">
                 {results.map(item => (
-                    <InfoCard key={item.property_id} item={item}/>
+                    <InfoCard key={item.property_id} item={item} show={true}/>
                 ))}
                 </div>
                 </section>

@@ -62,7 +62,7 @@ function BookedProps({user_id}){
     return (
         <>
             {props.map((prop, index) => {
-                return <InfoCard key={index} item={{'item': prop}} show={false}/>
+                return <InfoCard key={index} item={prop} show={false}/>
             })}
         </>
     )
@@ -87,21 +87,34 @@ function HostedProps({user_id}){
     return (
         <>
             {props.map((prop, index) => {
-                return <InfoCard key={index} item={{'item': prop}} show={false}/>
+                return <InfoCard key={index} item={prop} show={false}/>
             })}
         </>
     )
 }
 
 function Wishlist({user_id}){
+  const [props, setProps] = useState([]);
     useEffect(() => {
         Axios.post("http://localhost:3003/getWishlist", {
             user_id: user_id,
         })
         .then((response) => {
-            console.log(response);
+          response.data.props.forEach((prop) => {
+            setProps(prev => {
+              return [...prev, prop];
+            })
+          })
         })
-    }, [])
+    }, [user_id])
+
+    return (
+      <>
+        {props.map((prop, index) => {
+          return <InfoCard key={index*42} item={prop} show={false}/>
+        })}
+      </>
+    )
 }
 
 export default function BasicTabs() {
@@ -137,6 +150,7 @@ export default function BasicTabs() {
       </TabPanel>
       <TabPanel value={value} index={2}>
         Wishlist
+        <Wishlist user_id={user.user_id}/>
       </TabPanel>
     </Box>
   );

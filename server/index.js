@@ -197,7 +197,22 @@ app.post("/addRemoveWishlist",async (req,res)=>{
 			res.send({'status':'Done'})
 		})
 	}
-	
+})
+
+app.post("/getWishlist", (req, res) => {
+	const user_id = req.body.user_id;
+	const props = `select property.*,address.* from wishlist join property on property.property_id=wishlist.property_id join address on address.addr_id=property.addr_id where wishlist.guest_id="${user_id}"`;
+	db.query(props, (err, results) => {
+		if (err){
+			res.send({'status': false});
+		} else{
+			if (results==='undefined' || results.length===0){
+				res.send({'status': true, props: []});
+			} else{
+				res.send({'status': true, props: [...results]})
+			}
+		}
+	})
 })
 
 async function showProp(){
