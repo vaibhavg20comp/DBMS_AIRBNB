@@ -6,6 +6,9 @@ const bcrypt = require("bcrypt");
 const { reset } = require('nodemon');
 app.use(cors());
 app.use(bodyParser.json());
+
+require('dotenv').config()
+
 // const propertyData = {
 // 	property_id:null,
 // 	price_per_night:null,
@@ -17,9 +20,9 @@ const saltRounds = 10;
 const mysql=require('mysql');
 const db=mysql.createConnection({
 	host:'localhost',
-	database:'airbnb_dbms',
+	database:process.env.DATABASE,
 	user:'root',
-	password:'Div3daj$',
+	password:process.env.PASSWORD,
 	socketPath:'/var/run/mysqld/mysqld.sock',
 	timezone: 'Z',
 });
@@ -27,10 +30,10 @@ const db=mysql.createConnection({
 const mysql2 =require('mysql2/promise');
 const db2=mysql2.createConnection({
 	host:'localhost',
-        database:'airbnb_dbms',
-        user:'root',
-        password:'Div3daj$',
-		timezone: 'Z'
+	database:process.env.DATABASE,
+	user:'root',
+	password:process.env.PASSWORD,
+	timezone: 'Z'
 });
 
 app.post("/api/login", (req,res) => {
@@ -194,7 +197,16 @@ app.get('/showproperty',(req,res)=>{
 
 app.post("/getAmenities", (req, res) => {
 	const property_id = req.body.property_id;
-	const amenities = `select amenity from has_amenity where property_id="${property_id}"`
+	const amenities = `select amenity,description from has_amenity where property_id="${property_id}"`
+	db.query(amenities, (err, result) => {
+		console.log(result);
+		res.send([...result]);
+	})
+})
+
+app.post("/getRules", (req, res) => {
+	const property_id = req.body.property_id;
+	const amenities = `select rule,description from has_rules where property_id="${property_id}"`
 	db.query(amenities, (err, result) => {
 		console.log(result);
 		res.send([...result]);

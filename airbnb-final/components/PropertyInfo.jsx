@@ -22,10 +22,34 @@ function Amenity({amenities}){
                     </Grid>
                     <Grid item>
                         <Grid item>
-                            {amenity}
+                            {amenity.amenity}
                         </Grid>
                         <Grid item>
-                            {amenity}
+                            {amenity.description}
+                        </Grid>
+                    </Grid>
+                    </Grid>
+                )
+            })}
+        </>
+    )
+}
+
+function Rule({rules}){
+    return (
+        <>
+            {rules.map((rule) => {
+                return (
+                    <Grid container sx={{width: "80%"}} direction="row" alignItems={"center"} spacing={3}>
+                    <Grid item>
+                        Icon
+                    </Grid>
+                    <Grid item>
+                        <Grid item>
+                            {rule.rule}
+                        </Grid>
+                        <Grid item>
+                            {rule.description}
                         </Grid>
                     </Grid>
                     </Grid>
@@ -46,6 +70,7 @@ export default function PropertyInfo({propertyInfo, property_id}){
     const router = useRouter();
     // const property_id = router.query.property_id;
     const [amenities, setAmenities] = useState([]);
+    const [rules,setRules] = useState([]);
     useEffect(() => {
         Axios.post("http://localhost:3003/getAmenities", {
             property_id: property_id,
@@ -55,7 +80,19 @@ export default function PropertyInfo({propertyInfo, property_id}){
             response.data.forEach((amenity) => {
                 console.log(amenity);
                 setAmenities(prev => {
-                    return [...prev, amenity.amenity];
+                    return [...prev, amenity];
+                })
+            })
+        })
+
+        Axios.post("http://localhost:3003/getRules", {
+            property_id: property_id,
+        })
+        .then((response) => {
+            console.log(response.data);
+            response.data.forEach((rule) => {
+                setRules(prev => {
+                    return [...prev, rule];
                 })
             })
         })
@@ -88,18 +125,28 @@ export default function PropertyInfo({propertyInfo, property_id}){
                     spacing={2}
                 >
                     <Grid item sx={{width: "60%"}}>
+                        {amenities.length!==0 && 
+                        <>
+                            <Grid item>
+                                <Typography variant="h5">
+                                    Amenities
+                                </Typography>
+                            </Grid>
+                            <Grid item direction="column">
+                                <hr></hr>
+                                <Amenity amenities={amenities}/>
+                                <hr></hr>
+                            </Grid>
+                        </>}
                         <Grid item>
-                            <Typography variant="h5">
-                                Amenities
-                            </Typography>
-                        </Grid>
-                        <Grid item direction="column">
-                            <hr></hr>
-                            <Amenity amenities={amenities}/>
-                            <hr></hr>
-                        </Grid>
-                        <Grid item>
+                            <Typography variant="h5" sx={{textDecoration: "underline"}}>Property Description</Typography>
                            {propertyInfo.description}
+                        </Grid>
+                        <Grid item>
+                            <Typography variant="h5" sx={{textDecoration: "underline"}}>House Rules</Typography>
+                            <hr></hr>
+                            <Rule rules={rules}/>
+                            <hr></hr>
                         </Grid>
                     </Grid>
                     <Grid container sx={{width: "40%"}}>
