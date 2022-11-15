@@ -215,6 +215,7 @@ app.post("/getWishlist", (req, res) => {
 		}
 	})
 })
+
 app.post("/confirmBooking",async (req,res)=>{
 	const uid=req.body.user_id;
 	console.log(uid)
@@ -235,6 +236,7 @@ app.post("/confirmBooking",async (req,res)=>{
 		})
 	})
 })
+
 async function showProp(){
 	const query=`SELECT p.property_id,p.price_per_night,p.av_from_date,p.av_to_date,i.images,a.city,a.country 
 	from property p
@@ -245,12 +247,18 @@ async function showProp(){
 	const result=(await db2).query(query);
 	return result;
 }
+
 app.get('/showproperty',(req,res)=>{
 	const data=showProp();
 	data.then(function(result){
 		res.send(result[0])
 	})
 });
+
+app.post('/getImages', (req, res) => {
+	const property_id = req.body.property_id;
+	const images = `select * from property_has_images where property_id`
+})
 
 app.post("/getAmenities", (req, res) => {
 	const property_id = req.body.property_id;
@@ -285,6 +293,7 @@ async function getAmenities(property_id){
 	const rows=(await db2).query(query);
 	return rows;
 }
+
 app.get("/searchResults",async(req,res)=>{
 	const location=req.query.location;
 	const checkIn=req.query.checkIn.split('T')[0];
