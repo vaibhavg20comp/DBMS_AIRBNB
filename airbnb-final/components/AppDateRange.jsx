@@ -5,7 +5,7 @@ import { DATA_ACTION_TYPES } from '../utils/Enums';
 import { useDataContext } from '../utils/useDataContext';
 
 
-const AppDateRange = ({ months }) => {
+const AppDateRange = ({ months,disabledDates }) => {
   const [{ checkIn, checkOut }, dispatch] = useDataContext();
 
   const selectionRange = {
@@ -32,6 +32,7 @@ const AppDateRange = ({ months }) => {
         minDate={new Date()}
         showDateDisplay={false}
         monthDisplayFormat="MMMM YYY"
+        disabledDates={disabledDates}
       />
     </div>
   );
