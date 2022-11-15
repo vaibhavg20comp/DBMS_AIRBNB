@@ -110,8 +110,8 @@ export default function PropertyInfo({propertyInfo, property_id}){
                                 <PropertyTabs description={propertyInfo.description} amenities={amenities} rules={rules}/>
                             </Grid>
                         </Grid>
-                        <Grid item sx={{width: "40%"}}>
-                            <BookingCard property_id={property_id}/>
+                        <Grid container sx={{width: "40%"}}>
+                            <BookingCard property_id={property_id} rate={propertyInfo.price_per_night} property_title={propertyInfo.property_name}/>
                         </Grid>
                     </Grid>
                 </Box>

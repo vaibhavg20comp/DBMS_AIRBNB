@@ -21,7 +21,7 @@ import { EHeaderOptions } from '../utils/Enums';
 import { formatCheckDate, formatRangeDate } from '../utils/dateUtils';
 import { formatGuests } from '../utils/guestUtils';
 import Axios from "axios";
-
+import SubmitModal from "./SubmitModal";
 const  ESearchMenu =  {
     LOCATION : 'location',
     CHECK_IN : 'checkIn',
@@ -29,10 +29,14 @@ const  ESearchMenu =  {
     GUESTS : 'guests',
 }
 
-export default function BookingCard({property_id}){
+export default function BookingCard({property_id,property_title,rate}){
     const [searchMenu, setSearchMenu] = useState(null);
   // data
+  const router=useRouter();
+  const [userId,setUserId]=useState('');
+  const [showModal,setShowModal]=useState(false);
   const [{ location, checkIn, checkOut, guests }, dispatch] = useDataContext() ;
+  const [noOfDays,setNoOfDays]=useState(0);
   // handler
   const handleOnBlur = (event) => {
     const { relatedTarget } = event || {};
@@ -54,14 +58,49 @@ export default function BookingCard({property_id}){
     });
     handleOnBlur();
   };
-
+  var getDaysArray=function(start,end,arr){
+	for(var dt=new Date(start);dt<=new Date(end); dt.setDate(dt.getDate()+1)){
+		arr.push((new Date(dt)).toISOString().split('T')[0]);
+	}
+	return arr;
+}
   const handleOnSubmit = (event) => {
-    event.preventDefault();
+    event.preventDefault()
+    console.log(guests)
+    if(checkIn!==null && checkOut!=null && (guests['adults']+guests['children']+guests['infants'])>0){
+        var arr=getDaysArray(checkIn.toISOString().split('T')[0],checkOut.toISOString().split('T')[0],[])
+        setShowModal(!showModal);
+        console.log(arr)
+        setNoOfDays(arr.length);
+    }
   };
-
+  function cancel(){
+    setShowModal(false);
+  }
+  function confirmBooking(){
+    Axios.post("http://localhost:3003/confirmBooking",{
+        user_id:userId,
+        property_id:property_id,
+        total_price:(noOfDays*rate),
+        guests:guests,
+        checkIn:checkIn.toISOString(),
+        checkOut:checkOut.toISOString()
+    }).then((response)=>{
+        if(response.data.status==='Done'){
+            alert("Your booking has been added successfully")
+        }
+        else{
+            alert("An error occurred while confirming the booking")
+        }
+        router.push("/")
+    })
+  }
   const [disabledDates, setDisabledDates] = useState([]);
 
   useEffect(() => {
+    if (typeof window!=='undefined'){
+        setUserId(JSON.parse(sessionStorage.getItem('user_info')).user_id)
+    }
     Axios.post("http://localhost:3003/getBookedDates", {
         property_id: property_id,
     })
@@ -194,6 +233,7 @@ export default function BookingCard({property_id}){
                     <Button type="submit">
                         Submit
                     </Button>
+                    <SubmitModal confirm={confirmBooking} cancel={cancel} isVisible={showModal} property_title={property_title} checkIn={checkIn?.toISOString()} checkOut={checkOut?.toISOString()} rate={rate}  guests={guests} noOfDays={noOfDays}/>
                 </form>
             </CardContent>
             </Card>

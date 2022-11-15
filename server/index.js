@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const cors=require('cors');
 const bcrypt = require("bcrypt");
 const { reset } = require('nodemon');
+const uuid=require('uuid');
 app.use(cors());
 app.use(bodyParser.json());
 
@@ -214,7 +215,26 @@ app.post("/getWishlist", (req, res) => {
 		}
 	})
 })
-
+app.post("/confirmBooking",async (req,res)=>{
+	const uid=req.body.user_id;
+	console.log(uid)
+	const property_id=req.body.property_id;
+	const total_price=req.body.total_price;
+	const guests=req.body.guests;
+	const checkIn=req.body.checkIn.split('T')[0];
+	const checkOut=req.body.checkOut.split('T')[0];
+	const noOfGuests=guests.adults+guests.children+guests.infants;
+	const id=uuid.v4();
+	const query1=`insert into booking values ('${id}',now(),now(),${total_price},${noOfGuests},'${checkIn}','${checkOut}')`
+	const query2=`insert into book values ('${uid}','${property_id}','${id}')`
+	const result=(await db2).query(query1);
+	result.then(async function(result){
+		const r=(await db2).query(query2);
+		r.then((rr)=>{
+			res.send({"status":"Done"})
+		})
+	})
+})
 async function showProp(){
 	const query=`SELECT p.property_id,p.price_per_night,p.av_from_date,p.av_to_date,i.images,a.city,a.country 
 	from property p
