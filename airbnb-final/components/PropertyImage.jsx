@@ -7,12 +7,14 @@ import ImageListItem from '@mui/material/ImageListItem';
 import AppHeader from './AppHeader';
 import { Grid, Typography } from '@mui/material';
 
-export default function PropertyImage(){
+export default function PropertyImage({property_id, propertyName, city, state, country}){
+    // Use effect for rating
+    // Use effect for images
     return (
         <>
             <Box sx={{margin: "auto", width: "80%", borderStyle: "solid", borderRadius: "2px"}}>
                 <Typography variant="h2">
-                    Property Name
+                    {propertyName}
                 </Typography>
                 <Grid container direction="row" spacing={5}>
                     <Grid item>
@@ -22,7 +24,7 @@ export default function PropertyImage(){
                         Reviews
                     </Grid>
                     <Grid item>
-                        Location
+                        {city} | {state} | {country}
                     </Grid>
                 </Grid>
                 <Grid 

@@ -5,55 +5,81 @@ import * as React from 'react';
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import AppHeader from './AppHeader';
-import { Grid, Typography } from '@mui/material';
+import { useEffect, useState } from 'react';
+import Axios from "axios"
+import { Grid, Typography, Button } from '@mui/material';
 import BookingCard from './BookingCard';
 import {useRouter} from "next/router";
 
-function Amenity(){
+function Amenity({amenities}){
     return (
-        <Grid container sx={{width: "80%"}} direction="row" alignItems={"center"} spacing={3}>
-            <Grid item>
-                Icon
-            </Grid>
-            <Grid item>
-                <Grid item>
-                    Description
-                </Grid>
-                <Grid item>
-                    Description
-                </Grid>
-            </Grid>
-        </Grid>
+        <>
+            {amenities.map((amenity) => {
+                return (
+                    <Grid container sx={{width: "80%"}} direction="row" alignItems={"center"} spacing={3}>
+                    <Grid item>
+                        Icon
+                    </Grid>
+                    <Grid item>
+                        <Grid item>
+                            {amenity}
+                        </Grid>
+                        <Grid item>
+                            {amenity}
+                        </Grid>
+                    </Grid>
+                    </Grid>
+                )
+            })}
+        </>
     )
 }
 
-export default function PropertyInfo({property_id}){
-    const router = useRouter();
+function Test(){
+    Axios.get("http://localhost:3001/searchResults")
+    .then((response) => {
+        console.log(response);
+    })
+}
 
+export default function PropertyInfo({propertyInfo, property_id}){
+    const router = useRouter();
+    // const property_id = router.query.property_id;
+    const [amenities, setAmenities] = useState([]);
     useEffect(() => {
-        Axios.post("http://localhost:3001/api/property_info", {
-            property_id: property_id
+        Axios.post("http://localhost:3001/getAmenities", {
+            property_id: property_id,
         })
         .then((response) => {
-            console.log(response);
+            console.log(response.data);
+            response.data.forEach((amenity) => {
+                console.log(amenity);
+                setAmenities(prev => {
+                    return [...prev, amenity.amenity];
+                })
+            })
         })
-    }, [])
-    
+    },[])
+
     return (
         <>
             <Box sx={{margin: "auto", width: "80%", borderStyle: "solid", borderRadius: "2px"}}>
+                {propertyInfo?.firstname!=="undefined" && 
                 <Typography variant="h4">
-                    Hosted by (Owner name)
-                </Typography>
+                    Hosted by {propertyInfo.firstname}
+                </Typography>}
                 <Grid container direction="row" spacing={5}>
                     <Grid item>
-                        Guests
+                        Guests <br></br> {propertyInfo.max_occ}
                     </Grid>
                     <Grid item>
-                        Bedrooms/Beds
+                        Bedrooms <br></br> {propertyInfo.num_bedrooms}
                     </Grid>
                     <Grid item>
-                        Bathrooms
+                        Beds <br></br> {propertyInfo.num_beds}
+                    </Grid>
+                    <Grid item>
+                        Bathrooms <br></br>{propertyInfo.num_bathroom}
                     </Grid>
                 </Grid>
                 <Grid
@@ -69,13 +95,11 @@ export default function PropertyInfo({property_id}){
                         </Grid>
                         <Grid item direction="column">
                             <hr></hr>
-                            <Amenity />
-                            <Amenity />
-                            <Amenity />
+                            <Amenity amenities={amenities}/>
                             <hr></hr>
                         </Grid>
                         <Grid item>
-                            Property Description
+                           {propertyInfo.description}
                         </Grid>
                     </Grid>
                     <Grid container sx={{width: "40%"}}>

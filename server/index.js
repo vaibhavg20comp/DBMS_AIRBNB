@@ -25,7 +25,8 @@ const db=mysql.createConnection({
         database:process.env.DATABASE,
         user:'root',
         password:process.env.PASSWORD,
-        socketPath:'/var/run/mysqld/mysqld.sock'
+        socketPath:'/var/run/mysqld/mysqld.sock',
+		timezone: 'Z',
 });
 
 app.post("/api/login", (req,res) => {
@@ -124,6 +125,87 @@ app.post("/api/signup", (req,res) => {
 			})
         })
     })
+})
+
+app.post("/api/property_info", (req,res) => {
+	const property_id = req.body.property_id;
+	const info = `select property.*,user.*,address.city,address.state,address.country from property join has_property on has_property.property_id=property.property_id join user on user.user_id=has_property.user_id join address on address.addr_id=property.addr_id where property.property_id="${property_id}";`;
+	db.query(info, (err, result) => {
+		if (err){
+			res.send({'status': false})
+		} else{
+			res.send(result[0])
+		}
+	})
+})
+
+var getDaysArray=function(start,end,arr){
+	for(dt=new Date(start);dt<=new Date(end); dt.setDate(dt.getDate()+1)){
+		arr.push((new Date(dt)).toISOString().split('T')[0]);
+	}
+	return arr;
+}
+
+app.post("/getAmenities", (req, res) => {
+	const property_id = req.body.property_id;
+	const amenities = `select amenity from has_amenity where property_id="${property_id}"`
+	db.query(amenities, (err, result) => {
+		console.log(result);
+		res.send([...result]);
+	})
+})
+
+app.get("/searchResults",(req,res)=>{
+	const location="Pune";
+	const checkIn="2022-11-11";
+	const checkOut="2022-11-20";
+	const wantedDate=new Set(getDaysArray(checkIn,checkOut,[]));
+	const noOfDays=wantedDate.size;
+	console.log(checkIn);
+	console.log(checkOut)
+	const query=`select * from property join address on property.addr_id=address.addr_id where city='${location}' and av_from_date<='${checkIn}' and av_to_date>='${checkOut}'`;
+	db.query(query,(err,results)=>{
+		console.log(results);
+		if(err){
+			console.log(err)
+		}
+		else{
+			let properties = [];
+			results=results.map(v=>Object.assign({},v));
+			for(var i=0;i<results.length;i++){
+				var totalAv=getDaysArray(results[i].av_from_date,results[i].av_to_date,[]);
+				console.log(totalAv);
+				var bookedDates=[];
+				var amenities=[];
+				const property_id=results[i].property_id;
+				const query2=`select * from book join booking on book.booking_id=booking.booking_id where property_id='${property_id}'`
+				db.query(query2,(e,r)=>{
+					console.log("-----");
+					console.log(r);
+					if(e){
+						console.log(e)
+					}
+					else{
+						for(var j=0;j<r.length;j++){
+							bookedDates=getDaysArray(r[j].check_in_date,r[j].check_out_date,bookedDates);
+						}
+						console.log("87:",amenities);
+						console.log("88:",bookedDates);
+						totalAv=new Set(totalAv);
+						var booked_dates=new Set(bookedDates);
+						totalAv=new Set([...totalAv].filter(x=>!booked_dates.has(x)))
+						console.log(totalAv);
+						temp=new Set([...totalAv].filter(x=>wantedDate.has(x)));
+						console.log("189:",temp);
+						if(temp.size>0){
+							properties.push({property_id,noOfDays,amenities})
+						}
+					}
+				})
+			}
+			console.log("194:",properties)
+		}
+	})	
 })
 
 app.get('/showproperty',(req,res)=>{
