@@ -3,11 +3,14 @@ import { ContextProvider } from '../utils/store'
 // we can change this to animation later
 import ProgressBar from '@badrap/bar-of-progress';
 import Router from 'next/router';
+import { createContext, useState } from 'react';
 
 import { AppProps } from 'next/app';
 
 import '../styles/reactDateRange.css';
 import '../styles/carousel.css';
+
+export const UserContext = createContext()
 
 const progressBar = new ProgressBar({
   size: 4,
@@ -23,9 +26,12 @@ Router.events.on('routeChangeError', progressBar.finish);
 
 
 function MyApp({ Component, pageProps }) {
+  const [user, setUser] = useState("Hello");
   return (
     <ContextProvider>
-      <Component {...pageProps} />
+      <UserContext.Provider value={{user, setUser}}>
+        <Component {...pageProps} />
+      </UserContext.Provider>
     </ContextProvider>
   );
 }
