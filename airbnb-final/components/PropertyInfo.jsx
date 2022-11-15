@@ -150,7 +150,7 @@ export default function PropertyInfo({propertyInfo, property_id}){
                         </Grid>
                     </Grid>
                     <Grid container sx={{width: "40%"}}>
-                        <BookingCard property_id={property_id}/>
+                        <BookingCard property_id={property_id} rate={propertyInfo.price_per_night} property_title={propertyInfo.property_name}/>
                     </Grid>
                 </Grid>
             </Box>

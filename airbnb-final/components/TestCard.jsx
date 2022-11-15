@@ -8,7 +8,7 @@ import { Carousel } from "flowbite-react";
 function TestCard() {
     const [properties,setProperties] = useState({});
     const fetchProperties = async ()=>{
-        const res = await axios.get('http://localhost:3001/showproperty');
+        const res = await axios.get('http://localhost:3003/showproperty');
         setProperties(res.data);
     }
     useEffect(()=>{

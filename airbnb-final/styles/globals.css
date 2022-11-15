@@ -10,7 +10,7 @@ body {
   @apply mb-16 md:mb-0;
 }
 
-button,
+
 input {
   @apply outline-none;
 }
