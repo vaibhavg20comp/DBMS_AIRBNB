@@ -458,6 +458,14 @@ app.get('/showproperty',(req,res)=>{
 	});
 });
 
+
+app.post('/becomeHost',(req,res)=>{
+	console.log('Event Recieved',req.body.type);
+    const {type,data} =req.body;
+	console.log('data',data);
+	res.status(200).send('');
+})
+
 app.listen(3003,()=>{
 	console.log("Server is running on port 3003!!!!");
 })

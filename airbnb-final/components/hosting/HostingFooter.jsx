@@ -2,7 +2,7 @@ import {Button,Progress} from 'flowbite-react' ;
 import Link from 'next/link';
 
 
-function HostingFooter({id,objlen,onclick,onclickBack,buttondisable}) {
+function HostingFooter({id,objlen,reslen,onclick,onclickBack,buttondisable,submit}) {
   return (
     <div className="fixed  float-right w-1/2  inset-x-1/2 bottom-0 bg-white h-20 ">
     <Progress
@@ -10,16 +10,17 @@ function HostingFooter({id,objlen,onclick,onclickBack,buttondisable}) {
       size="sm"
       color="red"
     />
-      <div className='flex items-center justify-between  my-[1rem] m-10'>
+      <form className='flex items-center justify-between  my-[1rem] m-10'>
       <span className='text-xl font-bold text-gray-500 dark:text-white'>
       <Link className='underline font-extrabold' href={id===0?'/':'#'} onClick={onclickBack}>Back</Link>
       </span>
       <span className=''>
         <Button onClick={onclick} disabled={buttondisable}  color="red" className='w-[6rem] bg-black text-white font-extrabold'>
-            Next
+            <Link href={id>=objlen?'/':'#!'}>Next</Link>
+            
         </Button>
       </span>
-      </div>
+      </form>
   </div>
   )
 }

@@ -75,28 +75,151 @@ export const formQuestionsData = [
                 title:'Do you have standout amenities ?',
                 amenities:[
                     {
+                        id:'pool',
                         img:'randomurl',
-                        name:'pool',
+                        name:'Pool',
+                        
+                    },{
+                        id:'hotTub',
+                        img:'randomurl',
+                        name:'Hot tub',
+                    },
+                    {
+                        id:'patio',
+                        img:'randomurl',
+                        name:'Patio',
+                    },
+                    {
+                        id:'bbqGrill',
+                        img:'randomurl',
+                        name:'BBQ grill',
+                    },
+                    {
+                        id:'firePit',
+                        img:'randomurl',
+                        name:'Fire Pit',
+                    },
+                    {
+                        id:'poolTable',
+                        img:'randomurl',
+                        name:'Pool table',
+                    },
+                    {
+                        id:'gym',
+                        img:'randomurl',
+                        name:'Gym',
                     },
                 ]
             },
             {
                 title:'What about these guest favourites?',
-                amenitites:["Wifi","TV","Kitchen"],
+                amenities:[
+                    {
+                        id:'wifi',
+                        img:'randomurl',
+                        name:'Wi-Fi',
+                    },{
+                        id:'tv',
+                        img:'randomurl',
+                        name:'Tv',
+                    },
+                    {
+                        id:'kitchen',
+                        img:'randomurl',
+                        name:'Kitchen',
+                    },
+                    {
+                        id:'washingMachine',
+                        img:'randomurl',
+                        name:'Washing Machine',
+                    },
+                    {
+                        id:'freeParking',
+                        img:'randomurl',
+                        name:'Free parking on Premises',
+                    },
+                    {
+                        id:'paidParking',
+                        img:'randomurl',
+                        name:'Paid parking on Premises',
+                    },
+            ]
+            },
+            {
+                title:'Do you have any of these safety items ?',
+                amenities:[
+                    {
+                        id:'smokeAlarm',
+                        img:'randomurl',
+                        name:'Smoke Alarm',
+                    },
+                    {
+                        id:'firstAid',
+                        img:'randomurl',
+                        name:'First Aid Kit',
+                    },
+                    {
+                        id:'carbonmonoalarm',
+                        img:'randomurl',
+                        name:'Carbon Monoxide Alarm',
+                    },
+                    {
+                        id:'fireExtinguisher',
+                        img:'randomurl',
+                        name:'Fire extinguisher',
+                    },
+                ]
             }
         ]
     },{
         id:6,
+        title:'Select your House rules',
+        items:[
+            {
+                id:'noSmoking',
+                img:'randomurl',
+                name:'No smoking'
+            },
+            {
+                id:'noSound',
+                img:'randomurl',
+                name:'No Sound',
+            },
+            {
+                id:'noDrink',
+                img:'randomurl',
+                name:'No Drink',
+            },
+            {
+                id:'noFood',
+                img:'randomurl',
+                name:'No Food',
+            },
+            {
+                id:'noPets',
+                img:'randomurl',
+                name:'No Pets',
+            },
+            {
+                id:'noParties',
+                img:'randomurl',
+                name:'No Parties',
+            },
+        ]
+    },
+    {
+        id:7,
         title:'Next,Lets add some photos of your place'
     },{
-        id:7,
+        id:8,
         title:'Lets give your place a name '
     },{
-        id:8,
+        id:9,
         title:'Lets describe your place'
     },{
-        id:9,
+        id:10,
         title:'Now,set your price',
     },
 ];
+
 
