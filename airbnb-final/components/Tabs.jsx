@@ -156,7 +156,7 @@ function HostedProps({user_id}){
                 return (
                 <>
                   <InfoCard key={index} item={prop} show={false}/>
-                  <CancelModal confirm={propMan} cancel={cancel} isVisible={showModal} property_title={prop.property_name} booking_id={prop.booking_id} property_id={prop.property_id} state={1} listed={prop.listed.data[0]}/>
+                  {/* <CancelModal confirm={propMan} cancel={cancel} isVisible={showModal} property_title={prop.property_name} booking_id={prop.booking_id} property_id={prop.property_id} state={1} listed={prop.listed.data[0]}/> */}
                 </>
                 )
             })}
