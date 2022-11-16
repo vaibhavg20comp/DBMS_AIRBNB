@@ -47,7 +47,7 @@ export default function becomeHost() {
       return <HostingGuestSpaceKind items={formQuestionsData[id].items} setResponse={setResponse}/>
     }
     else if(id===3){
-      return <HostingPlaceLocation/>
+      return <HostingPlaceLocation setResponse={setResponse}/>
     }
     else if(id===4){
       return <HostingPlaceNumGuests setResponse={setResponse}/>
