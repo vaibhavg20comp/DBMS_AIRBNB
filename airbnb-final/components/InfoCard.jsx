@@ -7,13 +7,75 @@ import { useRouter } from 'next/navigation';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import Axios from "axios";
 import { Button } from '@mui/material';
-function InfoCard({item, show,cancel}) {
+import CancelModal from './CancelModal';
+function InfoCard({item, show,state,listed}) {
+    // console.log(item.property_id,listed)
+    const text=listed===0?"List property":"Unlist property"
     const [cIndex,setCIndex]=useState(0);
+    const [showModal,setShowModal]=useState(false)
     const color=['gray','red']
     const router=useRouter();
     const [user_id,setUserId]=useState('')
     const [images, setImages] = useState([]);
-
+    function cancel(){
+        setShowModal(false)
+      }
+      console.log(item)
+      function confirm(booking_id,property_id){
+        Axios.post("http://localhost:3003/removeBooking",{
+          userId:user_id,
+          property_id:property_id,
+          booking_id:booking_id
+        }).then((response)=>{
+          if(response.data.status==='Done'){
+            alert('Booking Has been cancelled')
+          }
+          else{
+            alert('Please try again')
+          }
+        })
+      }
+    function changeToggle(){
+        setShowModal(!showModal)
+      }
+      function propMan(property_id, listed){
+        console.log(listed);
+        if (listed===0){
+          list(property_id);
+        } else{
+          remove(property_id);
+        }
+      }
+  
+      function remove(property_id){
+        Axios.post("http://localhost:3003/removeProp", {
+          property_id: property_id,
+        })
+        .then((response) => {
+          if(response.data.status==='Done'){
+            alert('Property has been unlisted')
+          }
+          else{
+            alert('Please try again')
+          }
+        })
+      }
+      function cancel(){
+        setShowModal(false)
+      }
+      function list(property_id){
+        Axios.post("http://localhost:3003/listProp", {
+          property_id: property_id,
+        })
+        .then((response) => {
+          if(response.data.status==='Done'){
+            alert('Property has been listed')
+          }
+          else{
+            alert('Please try again')
+          }
+        })
+      }
     function goToProp(){
         if(show===false){
             return;
@@ -86,10 +148,12 @@ function InfoCard({item, show,cancel}) {
                     {show===true && <p className='text-right font-extralight'>
                      ₹ {item.price_per_night*item.noOfDays} total
                     </p>}
-                    {show==false?
-                    <p>
-                        <Button onClick={cancel} variant="outlined">Cancel Booking</Button>
+                    {show===false?state===0?<p>
+                        <Button onClick={changeToggle} variant="outlined">Cancel Booking</Button>
+                    </p>:<p>
+                        <Button onClick={changeToggle} variant="outlined">{text}</Button>
                     </p>:""}
+                    {state===0?<CancelModal confirm={confirm} cancel={cancel} isVisible={showModal} property_title={item.property_name} booking_id={item.booking_id} property_id={item.property_id} listed={null} state={0}/>:<CancelModal confirm={propMan} cancel={cancel} isVisible={showModal} property_title={item.property_name} booking_id={item.booking_id} property_id={item.property_id} listed={listed} state={1}/>}
                 </div>
             </div>
             </div>

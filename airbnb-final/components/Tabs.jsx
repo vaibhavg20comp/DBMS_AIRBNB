@@ -50,24 +50,7 @@ function BookedProps({user_id}){
       setShowModal(!showModal)
     }
 
-    function cancel(){
-      setShowModal(false)
-    }
-
-    function confirm(booking_id,property_id){
-      Axios.post("http://localhost:3003/removeBooking",{
-        userId:user_id,
-        property_id:property_id,
-        booking_id:booking_id
-      }).then((response)=>{
-        if(response.data.status==='Done'){
-          alert('Booking Has been cancelled')
-        }
-        else{
-          alert('Please try again')
-        }
-      })
-    }
+    
     
     useEffect(() => {
         Axios.post("http://localhost:3003/getBookedProps", {
@@ -88,8 +71,8 @@ function BookedProps({user_id}){
             {props.map((prop, index) => {
                 return (
                   <>
-                    <InfoCard key={index}  item={prop} show={false} cancel={changeToggle}/>
-                    <CancelModal confirm={confirm} cancel={cancel} isVisible={showModal} property_title={prop.property_name} booking_id={prop.booking_id} property_id={prop.property_id} state={0}/>
+                    <InfoCard key={index}  item={prop} show={false} cancel={changeToggle} state={0} listed={prop.listed.data[0]}/>
+                    
                   </>
                 )
             })}
@@ -99,6 +82,7 @@ function BookedProps({user_id}){
 
 function HostedProps({user_id}){
     const [props, setProps] = useState([]);
+   
     useEffect(() => {
         Axios.post("http://localhost:3003/getHostedProps", {
             user_id: user_id,
@@ -111,52 +95,15 @@ function HostedProps({user_id}){
             })
         })
     }, [user_id])
-
-    function propMan(property_id, listed){
-      console.log(listed);
-      if (listed.data[0]===0){
-        remove(property_id);
-      } else{
-        list(property_id);
-      }
-    }
-
-    function remove(property_id){
-      Axios.post("http://localhost:3003/removeProp", {
-        property_id: property_id,
-      })
-      .then((response) => {
-        if(response.data.status==='Done'){
-          alert('Booking Has been cancelled')
-        }
-        else{
-          alert('Please try again')
-        }
-      })
-    }
-
-    function list(property_id){
-      Axios.post("http://localhost:3003/listProp", {
-        property_id: property_id,
-      })
-      .then((response) => {
-        if(response.data.status==='Done'){
-          alert('Booking Has been cancelled')
-        }
-        else{
-          alert('Please try again')
-        }
-      })
-    }
+    
     
     return (
         <>
             {props.map((prop, index) => {
-                console.log(prop);
                 return (
                 <>
-                  <InfoCard key={index} item={prop} show={false}/>
-                  {/* <CancelModal confirm={propMan} cancel={cancel} isVisible={showModal} property_title={prop.property_name} booking_id={prop.booking_id} property_id={prop.property_id} state={1} listed={prop.listed.data[0]}/> */}
+                {console.log(prop)}
+                  <InfoCard key={index} item={prop} show={false} state={1} listed={prop.listed.data[0]}/>
                 </>
                 )
             })}

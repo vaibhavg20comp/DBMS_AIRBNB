@@ -413,10 +413,12 @@ app.post("/removeBooking",async (req,res)=>{
 	const user_id=req.body.user_id;
 	const property_id=req.body.property_id;
 	const booking_id=req.body.booking_id;
+	
 	const query1=`delete from booking where booking_id='${booking_id}'`;
+	console.log(booking_id,query1);
 	const data=(await db2).query(query1);
 	data.then((result)=>{
-		res.send({"status":"No"})
+		res.send({"status":"Done"})
 	})
 })
 

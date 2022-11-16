@@ -1,11 +1,14 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
 import { Modal } from 'react-bootstrap';
 
-function SubmitModal({confirm,cancel,isVisible,property_title,booking_id,property_id,listed}) {
+function CancelModal({confirm,cancel,isVisible,property_title,booking_id,property_id,listed,state}) {
   if (!isVisible) return null;
-  const text = listed===0?"List property":"Unlist property"
-  console.log(listed);
+  const [text, setText] = useState("");
+  console.log(property_id,listed)
+  useEffect(() => {
+    setText(state===0?"Cancel Booking":listed===0?"List Property":"Unlist Property")
+  }, [])
   return (
     <>
     <div className='fixed inset-0 bg-black bg-opacity-50 background-blur-sm flex justify-center items-center'>
@@ -15,7 +18,7 @@ function SubmitModal({confirm,cancel,isVisible,property_title,booking_id,propert
     </button>
     <div className='bg-white p-2 rounded overflow-auto'>
    <div className='h-96 overflow-scroll p-6'>
-    <h3 className='text-xl font-semibold text-gray-900 mb-5'>Cancel Booking</h3>
+    <h3 className='text-xl font-semibold text-gray-900 mb-5'>{text}</h3>
     <h5 className='text-xl font-semibold text-gray-900 mb-5'>
     Property Name
     </h5>
@@ -29,12 +32,10 @@ function SubmitModal({confirm,cancel,isVisible,property_title,booking_id,propert
     {booking_id}
     </p>
    <div className='flex justify-between mt-9'>
-    {state===0 && 
-      <Button variant='outlined' onClick={(e)=>{confirm(property_id,booking_id)}} color="success">Cancel Booking</Button>
-    }
-    {state===1 &&
-      <Button variant='outlined' onClick={(e)=>{confirm(property_id,booking_id,listed)}} color="success">{text}</Button>
-    }
+    
+      {state===0?<Button variant='outlined' onClick={(e)=>{confirm(booking_id,property_id)}} color="success">{text}</Button>:<Button variant='outlined' onClick={(e)=>{confirm(property_id,listed)}} color="success">{text}</Button>}
+    
+    
    <Button variant='outlined' onClick={cancel} color="error">Close</Button>
    </div>
    </div>
@@ -46,4 +47,4 @@ function SubmitModal({confirm,cancel,isVisible,property_title,booking_id,propert
   );
 }
 
-export default SubmitModal;
+export default CancelModal;
