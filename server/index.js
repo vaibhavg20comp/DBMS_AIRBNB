@@ -282,7 +282,7 @@ app.post("/getRules", (req, res) => {
 })
 
 async function getAvailableProperty(location,checkIn,checkOut,noOfGuests){
-	const query=`select * from property join address on property.addr_id=address.addr_id where city='${location}' and av_from_date<='${checkIn}' and av_to_date>='${checkOut} and max_occ>=${noOfGuests}'`;
+	const query=`select temp.*,wishlist_id from (select property.*,addr_line,city,state,country from property join address on property.addr_id=address.addr_id where city='${location}' and av_from_date<='${checkIn}' and av_to_date>='${checkOut}') as temp left join wishlist on temp.property_id=wishlist.property_id`;
 	const rows=(await db2).query(query)
 	return rows;
 }
@@ -303,15 +303,16 @@ async function getImages(property_id){
 	return images
 }
 
-app.get("/searchResults",async(req,res)=>{
-	const guests = req.query.guests;
+app.post("/searchResults",async(req,res)=>{
+	const guests = req.body.guests;
+	console.log("308:",guests)
 	const noOfGuests = guests.adults+guests.children+guests.infants;
-	const location=req.query.location;
-	const checkIn=req.query.checkIn.split('T')[0];
-	const checkOut=req.query.checkOut.split('T')[0];
+	const location=req.body.location;
+	const checkIn=req.body.checkIn.split('T')[0];
+	const checkOut=req.body.checkOut.split('T')[0];
 	const wantedDate=new Set(getDaysArray(checkIn,checkOut,[]));
 	const noOfDays=wantedDate.size;
-	const data1=getAvailableProperty(location,checkIn,checkOut);
+	const data1=getAvailableProperty(location,checkIn,checkOut,noOfGuests);
 	var properties=[]
 	await data1.then(async function(results){
 		for(var i=0;i<results[0].length;i++){
@@ -417,6 +418,15 @@ app.post("/removeBooking",async (req,res)=>{
 	const query1=`delete from booking where booking_id='${booking_id}'`;
 	console.log(booking_id,query1);
 	const data=(await db2).query(query1);
+	data.then((result)=>{
+		res.send({"status":"Done"})
+	})
+})
+
+app.post("/deleteProperty",async (req,res)=>{
+	const property_id=req.body.property_id;
+	const query=`delete from has_property where property_id='${property_id}'`;
+	const data=(await db2).query(query);
 	data.then((result)=>{
 		res.send({"status":"Done"})
 	})

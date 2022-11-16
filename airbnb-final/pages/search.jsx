@@ -4,7 +4,7 @@ import AppSection from "../components/AppSection";
 import SearchHero from "../components/SearchHero";
 import { useRouter } from "next/router";
 import {format} from "date-fns"
-import axios from "axios";
+import Axios from "axios";
 import { useEffect, useState } from "react";
 import InfoCard from "../components/InfoCard";
 import React from 'react'
@@ -13,8 +13,10 @@ import Tabs, {tabsClasses} from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import {Container} from '@mui/material';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
-import {filters} from "/data/filters"
-function search({searchResults}){
+import {filters} from "/data/filters";
+
+function search(){
+    const [searchResults,setSearchResults]=useState([]);
     const [results,setResults]=useState(searchResults);
     const router=useRouter();
     const [location,setLocation]=useState('');
@@ -37,7 +39,9 @@ function search({searchResults}){
     }
   
     useEffect(()=>{
+
         if(router.isReady){
+            console.log("43:",router.query.guests);
             setLocation(router.query.location);
             setCheckIn(router.query.checkIn);
             setCheckOut(router.query.checkOut);
@@ -46,9 +50,19 @@ function search({searchResults}){
             const sd=checkIn.split('T')[0]
             const ed=checkOut.split('T')[0]
             setRange(`${sd} to ${ed}`);
+            console.log("52:",router.asPath)
+            Axios.post("http://localhost:3003/searchResults",{
+                location:router.query.location,
+                checkIn:router.query.checkIn,
+                checkOut:router.query.checkOut,
+                guests:router.query.guests
+            }).then((response)=>{
+                setSearchResults(response.data);
+                setResults(response.data)
+            })
         }
         
-    },[router.isReady,location,checkIn,checkOut,range])
+    },[router.query.location])
     // const filters=[
     //     {id:1, label:'Pool',icon:<PoolIcon size={24}/>},
     //     {id:2, label:'Free Parking',icon:<GarageIcon size={24}/>},
@@ -106,15 +120,15 @@ function search({searchResults}){
 }
 export default search;
 
-export async function getServerSideProps(context){
+// export async function getServerSideProps(context){
     
-    const searchResults=await axios.get("http://localhost:3003/searchResults",{params:{location:context.query.location,checkIn:context.query.checkIn,checkOut:context.query.checkOut}}).then((response)=>{
-        return response.data;
-    })
-    console.log(searchResults)
-    return{
-        props:{
-            searchResults
-        }
-    }
-}
+//     const searchResults=await axios.get("http://localhost:3003/searchResults",{params:{location:context.query.location,checkIn:context.query.checkIn,checkOut:context.query.checkOut,guests:context.query.guests}}).then((response)=>{
+//         return response.data;
+//     })
+//     console.log(searchResults)
+//     return{
+//         props:{
+//             searchResults
+//         }
+//     }
+// }

@@ -82,7 +82,7 @@ const AppSearchBar = ({
     }
     if (searchPage) closeSearch();
     setSearchMenu(null);
-
+    console.log("85:",location)
     router.push({
       pathname: '/search',
       query: {

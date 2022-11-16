@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
 import { Modal } from 'react-bootstrap';
 
-function CancelModal({confirm,cancel,isVisible,property_title,booking_id,property_id,listed,state}) {
+function CancelModal({confirm,deleteProp,cancel,isVisible,property_title,booking_id,property_id,listed,state}) {
   if (!isVisible) return null;
   const [text, setText] = useState("");
   console.log(property_id,listed)
@@ -17,7 +17,7 @@ function CancelModal({confirm,cancel,isVisible,property_title,booking_id,propert
 
     </button>
     <div className='bg-white p-2 rounded overflow-auto'>
-   <div className='h-96 overflow-scroll p-6'>
+   <div className='h-80 overflow-scroll p-6'>
     <h3 className='text-xl font-semibold text-gray-900 mb-5'>{text}</h3>
     <h5 className='text-xl font-semibold text-gray-900 mb-5'>
     Property Name
@@ -25,17 +25,15 @@ function CancelModal({confirm,cancel,isVisible,property_title,booking_id,propert
     <p className='mb-5 font-normal text-gray-500'>
     {property_title}
     </p>
-    <h5 className='text-xl font-semibold text-gray-900 mb-5'>
+    {state===0?    
+    <><h5 className='text-xl font-semibold text-gray-900 mb-5'>
     Booking Id
     </h5>
     <p className='mb-5 font-normal text-gray-500'>
     {booking_id}
-    </p>
+    </p></>:""}
    <div className='flex justify-between mt-9'>
-    
-      {state===0?<Button variant='outlined' onClick={(e)=>{confirm(booking_id,property_id)}} color="success">{text}</Button>:<Button variant='outlined' onClick={(e)=>{confirm(property_id,listed)}} color="success">{text}</Button>}
-    
-    
+      {state===0?<Button variant='outlined' onClick={(e)=>{confirm(booking_id,property_id)}} color="success">{text}</Button>:<><Button variant='outlined' onClick={(e)=>{deleteProp(property_id)}} color="error">Delete</Button><Button variant='outlined' onClick={(e)=>{confirm(property_id,listed)}} color="success">{text}</Button></>}
    <Button variant='outlined' onClick={cancel} color="error">Close</Button>
    </div>
    </div>

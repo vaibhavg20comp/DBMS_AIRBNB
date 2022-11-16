@@ -11,7 +11,8 @@ import CancelModal from './CancelModal';
 function InfoCard({item, show,state,listed}) {
     // console.log(item.property_id,listed)
     const text=listed===0?"List property":"Unlist property"
-    const [cIndex,setCIndex]=useState(0);
+    const ci=item.wishlist_id===null?0:1;
+    const [cIndex,setCIndex]=useState(ci);
     const [showModal,setShowModal]=useState(false)
     const color=['gray','red']
     const router=useRouter();
@@ -94,6 +95,7 @@ function InfoCard({item, show,state,listed}) {
         else{
             setCIndex(0)
         }
+        console.log("98",item.property_id)
         Axios.post("http://localhost:3003/addRemoveWishlist",{
             user_id:user_id,
             property_id:item.property_id,
@@ -101,6 +103,18 @@ function InfoCard({item, show,state,listed}) {
         }).then((response)=>{
             console.log(response.data)
         })
+    }
+    function deleteProp(property_id){
+      Axios.post("http://localhost:3003/deleteProperty",{
+        property_id:property_id
+      }).then((response)=>{
+        if(response.data.status==="Done"){
+          alert("The property is successfully deleted")
+        }
+        else{
+          alert("An error occurred while deleting the property")
+        }
+      })
     }
     useEffect(()=>{
         if (typeof window!=='undefined'){
@@ -153,7 +167,7 @@ function InfoCard({item, show,state,listed}) {
                     </p>:<p>
                         <Button onClick={changeToggle} variant="outlined">{text}</Button>
                     </p>:""}
-                    {state===0?<CancelModal confirm={confirm} cancel={cancel} isVisible={showModal} property_title={item.property_name} booking_id={item.booking_id} property_id={item.property_id} listed={null} state={0}/>:<CancelModal confirm={propMan} cancel={cancel} isVisible={showModal} property_title={item.property_name} booking_id={item.booking_id} property_id={item.property_id} listed={listed} state={1}/>}
+                    {state===0?<CancelModal confirm={confirm} deleteProp={null} cancel={cancel} isVisible={showModal} property_title={item.property_name} booking_id={item.booking_id} property_id={item.property_id} listed={null} state={0}/>:<CancelModal confirm={propMan} deleteProp={deleteProp} cancel={cancel} isVisible={showModal} property_title={item.property_name} booking_id={item.booking_id} property_id={item.property_id} listed={listed} state={1}/>}
                 </div>
             </div>
             </div>
