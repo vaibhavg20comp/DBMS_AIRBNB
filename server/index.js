@@ -368,7 +368,7 @@ app.post("/getHostedProps", (req, res) => {
 
 app.post("/getBookedProps", (req, res) => {
 	const user_id = req.body.user_id;
-	const props = `select property.*,address.* from book join property on book.property_id=property.property_id join address on property.addr_id=address.addr_id where book.guest_id="${user_id}"`;
+	const props = `select property.*,address.*,booking_id from book join property on book.property_id=property.property_id join address on property.addr_id=address.addr_id where book.guest_id="${user_id}"`;
 	db.query(props, (err, results) => {
 		if (err){
 			console.log(err);
@@ -380,6 +380,17 @@ app.post("/getBookedProps", (req, res) => {
 				res.send({status: true, props: [...results]})
 			}
 		}
+	})
+})
+
+app.post("/removeBooking",async (req,res)=>{
+	const user_id=req.body.user_id;
+	const property_id=req.body.property_id;
+	const booking_id=req.body.booking_id;
+	const query1=`delete from booking where booking_id='${booking_id}'`;
+	const data=(await db2).query(query1);
+	data.then((result)=>{
+		res.send({"status":"No"})
 	})
 })
 

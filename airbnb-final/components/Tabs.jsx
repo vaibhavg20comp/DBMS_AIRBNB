@@ -8,7 +8,8 @@ import { useState, useEffect } from 'react';
 import Axios from 'axios';
 import InfoCard from './InfoCard';
 import { Grid } from '@mui/material';
-
+import CancelModal from "./CancelModal"
+import { Button } from 'react-bootstrap';
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -44,7 +45,27 @@ function a11yProps(index) {
 
 function BookedProps({user_id}){
     const [props, setProps] = useState([]);
-
+    const [showModal,setShowModal]=useState(false);
+    function changeToggle(){
+      setShowModal(!showModal)
+    }
+    function cancel(){
+      setShowModal(false)
+    }
+    function confirm(booking_id,property_id){
+      Axios.post("http://localhost:3003/removeBooking",{
+        userId:user_id,
+        property_id:property_id,
+        booking_id:booking_id
+      }).then((response)=>{
+        if(response.data.status==='Done'){
+          alert('Booking Has been cancelled')
+        }
+        else{
+          alert('Please try again')
+        }
+      })
+    }
     useEffect(() => {
         Axios.post("http://localhost:3003/getBookedProps", {
             user_id: user_id,
@@ -62,7 +83,12 @@ function BookedProps({user_id}){
     return (
         <>
             {props.map((prop, index) => {
-                return <InfoCard key={index} item={prop} show={false}/>
+                return (
+                  <>
+                  <InfoCard key={index}  item={prop} show={false} cancel={changeToggle}/>
+                  <CancelModal confirm={confirm} cancel={cancel} isVisible={showModal} property_title={prop.property_name} booking_id={prop.booking_id} property_id={prop.property_id}/>
+                  </>
+                )
             })}
         </>
     )
@@ -70,7 +96,6 @@ function BookedProps({user_id}){
 
 function HostedProps({user_id}){
     const [props, setProps] = useState([]);
-
     useEffect(() => {
         Axios.post("http://localhost:3003/getHostedProps", {
             user_id: user_id,
