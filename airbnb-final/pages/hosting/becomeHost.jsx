@@ -17,6 +17,7 @@ import axios from 'axios';
 
 import { formQuestionsData } from "../../data";
 import ImageUpload from '../../components/hosting/ImageUpload';
+import HouseRules from '../../components/hosting/HouseRules';
 const FormResponse=[];
 
 export default function becomeHost() {
@@ -62,15 +63,18 @@ export default function becomeHost() {
       return <HostingPlaceAmenities items={formQuestionsData[id].items} setResponse={setResponse}/>
     }
     else if(id===6){
-      return <ImageUpload setResponse={setResponse}/>
+      return <HouseRules items={formQuestionsData[id].items} setResponse={setResponse}/>
     }
     else if(id===7){
-      return <HostingPlaceTitle setResponse={setResponse}/>
+      return <ImageUpload setResponse={setResponse}/>
     }
     else if(id===8){
-      return <HostingPlaceAbout setResponse={setResponse}/>
+      return <HostingPlaceTitle setResponse={setResponse}/>
     }
     else if(id===9){
+      return <HostingPlaceAbout setResponse={setResponse}/>
+    }
+    else if(id===10){
       return <HostingPlacePrice setResponse={setResponse}/>
     }
   }

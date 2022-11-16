@@ -1,20 +1,12 @@
 import { Box, Button, Grid, TextField } from '@mui/material';
 import React, { useState } from 'react';
-import ReactMapGL from 'react-map-gl';
-import Axios from "axios";
 
 export default function HostingPlaceLocation ({setResponse}){
-  const [viewport,setViewport] = useState({
-    width:'100%',
-    height:'100%',
-    latitude:37.7577,
-    longitude: -122.4376,
-    zoom:8,
-  });
 
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
   const [country, setCountry] = useState("");
+  const [zip,setZip]  = useState(""); 
   const [addressLine, setAddressLine] = useState("");
 
   function handleSubmit(e){
@@ -24,12 +16,13 @@ export default function HostingPlaceLocation ({setResponse}){
       city: city,
       state: state,
       country: country,
+      zip:zip,
       addressLine: addressLine,
     })
   }
 
   return (
-    <Grid item xs={12} sm={8} md={5} elevation={6} square sx={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+    <Grid item xs={12} sm={8} md={5} elevation={6}  sx={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
     <Box
         sx={{
         my: 8,
@@ -40,6 +33,16 @@ export default function HostingPlaceLocation ({setResponse}){
         }}
     >
         <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }} >
+        <TextField
+            margin="normal"
+            required
+            fullWidth
+            name="addressLine"
+            label="addressLine"
+            type="addressLine"
+            id="addressLine"
+            onChange={(e) => {setAddressLine(e.target.value)}}
+        />
         <TextField
             margin="normal"
             required
@@ -75,12 +78,13 @@ export default function HostingPlaceLocation ({setResponse}){
             margin="normal"
             required
             fullWidth
-            name="addressLine"
-            label="addressLine"
-            type="addressLine"
-            id="addressLine"
-            onChange={(e) => {setAddressLine(e.target.value)}}
+            name="zip"
+            label="zip"
+            type="number"
+            id="zip"
+            onChange={(e) => {setZip(e.target.value)}}
         />
+        
         <Button
             type="submit"
             fullWidth
@@ -95,7 +99,7 @@ export default function HostingPlaceLocation ({setResponse}){
     </Grid>
 )}
 
-
+// Toconfigure map us below format
 
 // export default function HostingPlaceLocation (){
 //   const [viewport,setViewport] = useState({
