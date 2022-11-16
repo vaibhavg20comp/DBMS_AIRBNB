@@ -39,10 +39,13 @@ function InfoCard({item, show}) {
             setUserId(JSON.parse(sessionStorage.getItem('user_info')).user_id);
         }
     },[])
+    console.log(item);
+    const notFound = '/images/airbnb2.webp'
   return (
     <div  className='flex py-7 px-2 pr-4 border-b cursor-pointer hover:opacity-80 hover:shadow-lg transition duration-200 ease-out first:border-t'>
         <div className='relative h-24 w-40 md:h-52 md:w-80 flex-shrink-0'>
-            <Image src="/assets/hero.jpg" layout='fill' objectFit='cover'/>
+            {console.log(item.images[0]?.image_url)}
+            <Image src={item.images.length===0?notFound:item.images[0]?.image_url} layout='fill' objectFit='cover'/>
         </div>
         <div className='flex flex-col flex-grow pl-5'>
             <div className='flex justify-between'>

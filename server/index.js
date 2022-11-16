@@ -255,9 +255,12 @@ app.get('/showproperty',(req,res)=>{
 	})
 });
 
-app.post('/getImages', (req, res) => {
+app.post('/getImages', async (req, res) => {
 	const property_id = req.body.property_id;
-	const images = `select * from property_has_images where property_id`
+	const images = `select * from property_has_images where property_id="${property_id}"`
+	db.query(images, (err, results) => {
+		res.send(results);
+	})
 })
 
 app.post("/getAmenities", (req, res) => {
@@ -294,6 +297,12 @@ async function getAmenities(property_id){
 	return rows;
 }
 
+async function getImages(property_id){
+	const query = `select * from property_has_images where property_id="${property_id}"`
+	const images = (await db2).query(query);
+	return images
+}
+
 app.get("/searchResults",async(req,res)=>{
 	const location=req.query.location;
 	const checkIn=req.query.checkIn.split('T')[0];
@@ -307,11 +316,18 @@ app.get("/searchResults",async(req,res)=>{
 			var totalAv=getDaysArray(results[0][i].av_from_date,results[0][i].av_to_date,[]);
 			var bookedDates=[];
 			var amenities=[];
+			var images = [];
 			var data3=getAmenities(results[0][i].property_id);
+			var data4 = getImages(results[0][i].property_id);
 			await data3.then(async function(re){
 				for(var k=0;k<re[0].length;k++){
 					amenities.push(re[0][k].amenity);
 					// console.log("88:",amenities)
+				}
+			})
+			await data4.then(async function(re){
+				for (var k=0; k<re[0].length; k++){
+					images.push(re[0][k])
 				}
 			})
 			var data2=getBookings(results[0][i].property_id);
@@ -325,7 +341,7 @@ app.get("/searchResults",async(req,res)=>{
 			ta=new Set([...ta].filter(x=>!booked_date.has(x)));
 			temp=new Set([...ta].filter(x=>wantedDate.has(x)));
 			if(temp.size){
-				properties.push({...results[0][i],noOfDays,amenities})
+				properties.push({...results[0][i],noOfDays,amenities,images})
 			}
 		}
 		console.log(properties)
