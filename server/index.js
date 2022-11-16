@@ -281,8 +281,8 @@ app.post("/getRules", (req, res) => {
 	})
 })
 
-async function getAvailableProperty(location,checkIn,checkOut){
-	const query=`select * from property join address on property.addr_id=address.addr_id where city='${location}' and av_from_date<='${checkIn}' and av_to_date>='${checkOut}'`;
+async function getAvailableProperty(location,checkIn,checkOut,noOfGuests){
+	const query=`select * from property join address on property.addr_id=address.addr_id where city='${location}' and av_from_date<='${checkIn}' and av_to_date>='${checkOut} and max_occ>=${noOfGuests}'`;
 	const rows=(await db2).query(query)
 	return rows;
 }
@@ -304,6 +304,8 @@ async function getImages(property_id){
 }
 
 app.get("/searchResults",async(req,res)=>{
+	const guests = req.query.guests;
+	const noOfGuests = guests.adults+guests.children+guests.infants;
 	const location=req.query.location;
 	const checkIn=req.query.checkIn.split('T')[0];
 	const checkOut=req.query.checkOut.split('T')[0];
@@ -351,7 +353,7 @@ app.get("/searchResults",async(req,res)=>{
 
 app.post("/getHostedProps", (req, res) => {
 	const user_id = req.body.user_id;
-	const props = `select property.* from has_property join property on has_property.property_id=property.property_id where has_property.user_id="${user_id}"`;
+	const props = `select property.*,address.* from has_property join property on has_property.property_id=property.property_id join address on address.addr_id=property.addr_id where has_property.user_id="${user_id}"`;
 	db.query(props, (err, results) => {
 		console.log(results);
 		if (err){
@@ -362,6 +364,30 @@ app.post("/getHostedProps", (req, res) => {
 			} else{
 				res.send({status: true, props: [...results]})
 			}
+		}
+	})
+})
+
+app.post("/removeProp", (req, res) => {
+	const property_id = req.body.property_id;
+	const unlist = `update property set listed=b'0' where property_id="${property_id}"`;
+	db.query(unlist, (err, results) => {
+		if (err){
+			res.send({"status": false});
+		} else{
+			res.send({'status': "Done"})
+		}
+	})
+})
+
+app.post("/listProp", (req, res) => {
+	const property_id = req.body.property_id;
+	const unlist = `update property set listed=b'1' where property_id="${property_id}"`;
+	db.query(unlist, (err, results) => {
+		if (err){
+			res.send({"status": false});
+		} else{
+			res.send({'status': "Done"})
 		}
 	})
 })

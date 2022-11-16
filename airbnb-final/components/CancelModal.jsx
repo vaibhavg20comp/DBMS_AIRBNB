@@ -2,8 +2,10 @@ import { useState } from 'react';
 import Button from '@mui/material/Button';
 import { Modal } from 'react-bootstrap';
 
-function SubmitModal({confirm,cancel,isVisible,property_title,booking_id,property_id}) {
+function SubmitModal({confirm,cancel,isVisible,property_title,booking_id,property_id,listed}) {
   if (!isVisible) return null;
+  const text = listed===0?"List property":"Unlist property"
+  console.log(listed);
   return (
     <>
     <div className='fixed inset-0 bg-black bg-opacity-50 background-blur-sm flex justify-center items-center'>
@@ -27,7 +29,12 @@ function SubmitModal({confirm,cancel,isVisible,property_title,booking_id,propert
     {booking_id}
     </p>
    <div className='flex justify-between mt-9'>
-   <Button variant='outlined' onClick={(e)=>{confirm(property_id,booking_id)}} color="success">Cancel Booking</Button>
+    {state===0 && 
+      <Button variant='outlined' onClick={(e)=>{confirm(property_id,booking_id)}} color="success">Cancel Booking</Button>
+    }
+    {state===1 &&
+      <Button variant='outlined' onClick={(e)=>{confirm(property_id,booking_id,listed)}} color="success">{text}</Button>
+    }
    <Button variant='outlined' onClick={cancel} color="error">Close</Button>
    </div>
    </div>

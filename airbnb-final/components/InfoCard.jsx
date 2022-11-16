@@ -12,6 +12,8 @@ function InfoCard({item, show,cancel}) {
     const color=['gray','red']
     const router=useRouter();
     const [user_id,setUserId]=useState('')
+    const [images, setImages] = useState([]);
+
     function goToProp(){
         if(show===false){
             return;
@@ -45,11 +47,22 @@ function InfoCard({item, show,cancel}) {
     },[])
     console.log(item);
     const notFound = '/images/airbnb2.webp'
+
+    useEffect(() => {
+        Axios.post("http://localhost:3003/getImages", {
+            property_id: item.property_id
+        })
+        .then((response) => {
+            setImages(prev => {
+                return [...prev, ...response.data]
+            })
+        })
+    }, [])
+
   return (
     <div  className='flex py-7 px-2 pr-4 border-b cursor-pointer hover:opacity-80 hover:shadow-lg transition duration-200 ease-out first:border-t'>
         <div className='relative h-24 w-40 md:h-52 md:w-80 flex-shrink-0'>
-            {console.log(item.images[0]?.image_url)}
-            <Image src={item.images.length===0?notFound:item.images[0]?.image_url} layout='fill' objectFit='cover'/>
+            <Image src={images.length===0?notFound:images[0]?.image_url} layout='fill' objectFit='cover'/>
         </div>
         <div className='flex flex-col flex-grow pl-5'>
             <div className='flex justify-between'>
