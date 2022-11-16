@@ -14,7 +14,7 @@ function HostingPlacePrice({setResponse}) {
       } btnDecrease p-[7px] border border-gray-300 rounded-full border-opacity-70 inline-block outline-none active:scale-90 duration-300`}
       onClick={()=>{
         setValue((n)=>(n-1)>=0?n-1:0)
-        setResponse({price_per_night:Number(value)})
+        setResponse({price_per_night:Number((n)=>(n-1)>=0?n-1:0)})
       }}
     >
       <MinusIcon className="h-8 text-gray-300" />

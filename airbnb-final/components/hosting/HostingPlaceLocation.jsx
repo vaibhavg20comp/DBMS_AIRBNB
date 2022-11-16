@@ -42,6 +42,7 @@ export default function HostingPlaceLocation ({setResponse}){
             type="addressLine"
             id="addressLine"
             onChange={(e) => {setAddressLine(e.target.value)}}
+            autoFocus
         />
         <TextField
             margin="normal"
@@ -51,8 +52,6 @@ export default function HostingPlaceLocation ({setResponse}){
             label="City"
             name="city"
             onChange={(e) => {setCity(e.target.value)}}
-            autoComplete="City"
-            autoFocus
         />
         <TextField
             margin="normal"

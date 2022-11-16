@@ -15,10 +15,11 @@ function HostingFooter({id,objlen,reslen,onclick,onclickBack,buttondisable,submi
       <Link className='underline font-extrabold' href={id===0?'/':'#'} onClick={onclickBack}>Back</Link>
       </span>
       <span className=''>
-        <Button onClick={onclick} disabled={buttondisable}  color="red" className='w-[6rem] bg-black text-white font-extrabold'>
+        {id!==10?<Button onClick={onclick} disabled={buttondisable}  color="red" className='w-[6rem] bg-black text-white font-extrabold'>
             <Link href={id>=objlen?'/':'#!'}>Next</Link>
-            
-        </Button>
+        </Button>:<Button onClick={submit} disabled={buttondisable}  color="red" className='w-[6rem] bg-black text-white font-extrabold'>
+            <Link href={id>=objlen?'/':'#!'}>Submit</Link>
+        </Button>}
       </span>
       </form>
   </div>
