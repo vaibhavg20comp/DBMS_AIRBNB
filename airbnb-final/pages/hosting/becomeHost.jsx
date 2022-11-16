@@ -13,8 +13,10 @@ import HostingPlacePics from '../../components/hosting/HostingPlacePics';
 import HostingPlaceTitle from '../../components/hosting/HostingPlaceTitle';
 import HostingPlaceAbout from '../../components/hosting/HostingPlaceAbout';
 import HostingPlacePrice from '../../components/hosting/HostingPlacePrice';
+import axios from 'axios';
 
 import { formQuestionsData } from "../../data";
+import ImageUpload from '../../components/hosting/ImageUpload';
 const FormResponse=[];
 
 export default function becomeHost() {
@@ -22,12 +24,16 @@ export default function becomeHost() {
   const [response,setResponse] = useState(null);
   const [buttondisable,setButtondisable] =useState(true);
   const onclick=()=>{
+    
     FormResponse.push({id,response})
     console.log(FormResponse);
-    setId((c)=>c+1);
+    setId((c)=>FormResponse.length<=formQuestionsData.length ? (c+1):c);
     setResponse(null);
     setButtondisable(true)
   }
+  // const submit = function(){
+  //   axios.post('http://localhost:3003/becomeHost',{FormResponse});
+  // }
   const onclickBack=()=>{
     setResponse(null);
     setId((c)=>c-1);
@@ -47,7 +53,7 @@ export default function becomeHost() {
       return <HostingGuestSpaceKind items={formQuestionsData[id].items} setResponse={setResponse}/>
     }
     else if(id===3){
-      return <HostingPlaceLocation/>
+      return <HostingPlaceLocation setResponse={setResponse}/>
     }
     else if(id===4){
       return <HostingPlaceNumGuests setResponse={setResponse}/>
@@ -56,7 +62,7 @@ export default function becomeHost() {
       return <HostingPlaceAmenities items={formQuestionsData[id].items} setResponse={setResponse}/>
     }
     else if(id===6){
-      return <HostingPlacePics/>
+      return <ImageUpload setResponse={setResponse}/>
     }
     else if(id===7){
       return <HostingPlaceTitle setResponse={setResponse}/>
@@ -71,12 +77,13 @@ export default function becomeHost() {
   return (
     <div className='relative flex flex-row'>
       <HostingQuestions question={formQuestionsData[id]?.title} />
-      <div className=' relative inset-x-1/2 w-1/2  '> 
+      <div className=' relative inset-x-1/2 mb-[2rem] w-1/2  '> 
         {renderComponent()}
       </div>
       <HostingFooter 
       id={id} 
       objlen={formQuestionsData.length} 
+      reslen={FormResponse.length}
       onclick={onclick}
       onclickBack={onclickBack}
       buttonDisable ={buttondisable}
