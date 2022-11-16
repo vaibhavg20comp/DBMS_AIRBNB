@@ -6,12 +6,16 @@ import { ST } from 'next/dist/shared/lib/utils';
 import { useRouter } from 'next/navigation';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import Axios from "axios";
-function InfoCard({item, show}) {
+import { Button } from '@mui/material';
+function InfoCard({item, show,cancel}) {
     const [cIndex,setCIndex]=useState(0);
     const color=['gray','red']
     const router=useRouter();
     const [user_id,setUserId]=useState('')
     function goToProp(){
+        if(show===false){
+            return;
+        }
         router.push({
             pathname: '/property',
             query:{
@@ -66,6 +70,10 @@ function InfoCard({item, show}) {
                     {show===true && <p className='text-right font-extralight'>
                      ₹ {item.price_per_night*item.noOfDays} total
                     </p>}
+                    {show==false?
+                    <p>
+                        <Button onClick={cancel} variant="outlined">Cancel Booking</Button>
+                    </p>:""}
                 </div>
             </div>
             </div>
