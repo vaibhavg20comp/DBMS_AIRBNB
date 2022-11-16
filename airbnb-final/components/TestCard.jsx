@@ -22,7 +22,8 @@ function TestCard() {
     }
     const renderedProperties =Object.values(properties).map((property)=>{
 
-        const images = JSON.parse(property.images);
+        // const images = JSON.parse(property.images);
+        const images = [];
 
         return (
             <Link legacyBehavior key={property.property_id} href="#!">

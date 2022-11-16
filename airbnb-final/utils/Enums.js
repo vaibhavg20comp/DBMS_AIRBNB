@@ -1,3 +1,9 @@
+import SmokeFreeIcon from '@mui/icons-material/SmokeFree';
+import VolumeOffIcon from '@mui/icons-material/VolumeOff';
+import NoDrinksIcon from '@mui/icons-material/NoDrinks';
+import NoFoodIcon from '@mui/icons-material/NoFood';
+import CancelIcon from '@mui/icons-material/Cancel';
+
 export const EHeaderOptions = {
     PLACES_TO_STAY :'placesToStay',
     FIND_EXPERIENCES : 'findExperiences',
@@ -29,3 +35,12 @@ export const initialState = {
     checkOut: null,
     guests: { adults: 0, children: 0, infants: 0 },
 };
+
+export const iconMap = {
+    "noSmoke": <SmokeFreeIcon />,
+    "noSound": <VolumeOffIcon />,
+    "noDrink": <NoDrinksIcon />,
+    "noFood": <NoFoodIcon />,
+    "noPets": <CancelIcon />,
+    "noParties": <CancelIcon />,
+}

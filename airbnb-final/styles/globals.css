@@ -10,7 +10,7 @@ body {
   @apply mb-16 md:mb-0;
 }
 
-button,
+
 input {
   @apply outline-none;
 }
@@ -25,5 +25,11 @@ input {
   input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
+  }
+}
+
+@layer components{
+  .button {
+    @apply px-4 py-2 border rounded-full cursor-pointer hover:shadow-lg active:scale-95 active:bg-gray-100 transition transform duration-100 ease-out;
   }
 }

@@ -13,7 +13,7 @@ import HostingPlacePics from '../../components/hosting/HostingPlacePics';
 import HostingPlaceTitle from '../../components/hosting/HostingPlaceTitle';
 import HostingPlaceAbout from '../../components/hosting/HostingPlaceAbout';
 import HostingPlacePrice from '../../components/hosting/HostingPlacePrice';
-import axios from 'axios';
+import Axios from "axios";
 
 import { formQuestionsData } from "../../data";
 import ImageUpload from '../../components/hosting/ImageUpload';
@@ -32,9 +32,16 @@ export default function becomeHost() {
     setResponse(null);
     setButtondisable(true)
   }
-  // const submit = function(){
-  //   axios.post('http://localhost:3003/becomeHost',{FormResponse});
-  // }
+  const submit = function(){
+    console.log("Hello");
+    console.log(FormResponse);
+    FormResponse.push({id,response})
+    setId((c)=>FormResponse.length<=formQuestionsData.length ? (c+1):c);
+    setResponse(null);
+    setButtondisable(true)
+    Axios.post('http://localhost:3003/becomeHost',{FormResponse});
+  }
+
   const onclickBack=()=>{
     setResponse(null);
     setId((c)=>c-1);
@@ -91,6 +98,7 @@ export default function becomeHost() {
       onclick={onclick}
       onclickBack={onclickBack}
       buttonDisable ={buttondisable}
+      submit={submit}
       />
     </div>
   )

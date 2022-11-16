@@ -27,7 +27,7 @@ function HostingPlaceAmenities({items,setResponse}) {
                         checked.filter((p)=>p.name!==amenity.name)
                       );
                     }
-                    setResponse(checked);
+                    setResponse([...checked,amenity.name]);
                   }}
                   value={checked}
                   />

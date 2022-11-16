@@ -42,6 +42,7 @@ export default function HostingPlaceLocation ({setResponse}){
             type="addressLine"
             id="addressLine"
             onChange={(e) => {setAddressLine(e.target.value)}}
+            autoFocus
         />
         <TextField
             margin="normal"
@@ -51,8 +52,6 @@ export default function HostingPlaceLocation ({setResponse}){
             label="City"
             name="city"
             onChange={(e) => {setCity(e.target.value)}}
-            autoComplete="City"
-            autoFocus
         />
         <TextField
             margin="normal"
@@ -98,25 +97,3 @@ export default function HostingPlaceLocation ({setResponse}){
     </Box>
     </Grid>
 )}
-
-// Toconfigure map us below format
-
-// export default function HostingPlaceLocation (){
-//   const [viewport,setViewport] = useState({
-//     width:'100%',
-//     height:'100%',
-//     latitude:37.7577,
-//     longitude: -122.4376,
-//     zoom:8,
-//   });
-//   return (
-//   <section className='min-w-[600px]'>
-//     <ReactMapGL
-//     mapStyle='mapbox://styles/vaibhavg20comp/clai2qvq2000214qlka4v6jlt'
-//     mapboxApiAccessToken='pk.eyJ1IjoidmFpYmhhdmcyMGNvbXAiLCJhIjoiY2xhaHZpOGtoMDN5YjNxbWtuc3I0cGh1ZSJ9.5jVoNxjHjywGAVWnbw_DOw'
-//     {...viewport}
-//     >
-//     </ReactMapGL>
-//   </section>
-// )}
-

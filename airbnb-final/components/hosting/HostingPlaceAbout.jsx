@@ -21,7 +21,7 @@ function HostingPlaceAbout({setResponse}) {
       value={term}
       onChange={e=>{
         setTerm(e.target.value)
-        setResponse({property_description:term})
+        setResponse({property_description:e.target.value})
       }}
     />
   </div>

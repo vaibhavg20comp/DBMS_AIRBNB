@@ -1,6 +1,6 @@
-import React, {useState,useEffect} from 'react'
+import React, {useState,useEffect, useContext} from 'react'
 import Link from 'next/link';
-import { GlobeAltIcon, MenuIcon, SearchIcon } from '@heroicons/react/outline';
+import { GlobeAltIcon, LogoutIcon, MenuIcon, SearchIcon } from '@heroicons/react/outline';
 import { UserCircleIcon } from '@heroicons/react/solid';
 
 import AppLogo  from './AppLogo';
@@ -9,8 +9,16 @@ import {formatGuests} from '../utils/guestUtils';
 import {formatRangeDate} from '../utils/dateUtils';
 import AppHeaderOption from './AppHeaderOption';
 import AppSearchBar from './AppSearchBar';
-function AppHeader({exploreNearby,searchPage,query}) {
-    const [isSnapTop, setIsSnapTop] = useState(searchPage ? false : true);
+import { useRouter } from 'next/navigation';
+import { UserContext } from '../pages/_app';
+
+function AppHeader({exploreNearby,searchPage,query,user_info,color}) {
+    
+    const [user,setUser]=useState('');
+    const router = useRouter();
+    const [isSnapTop, setIsSnapTop] = useState(searchPage===false ? false : true);
+    console.log(searchPage);
+    console.log(isSnapTop);
     const [isActiveSearch, setIsActiveSearch] = useState(
         searchPage ? false : true
     );
@@ -35,12 +43,20 @@ function AppHeader({exploreNearby,searchPage,query}) {
         return style.join(' ');
     };
     useEffect(() => {
+        if (typeof window!=='undefined'){
+            setUser(JSON.parse(sessionStorage.getItem('user_info')))
+        }
         // listen to scroll
         if (!searchPage) {
           window.addEventListener('scroll', handleOnScroll);
         }
         return () => window.removeEventListener('scroll', handleOnScroll);
       }, [searchPage]);
+    
+      function logout(){
+        sessionStorage.clear();
+        router.push('/Login');
+      }
 
     return (
         <>
@@ -62,12 +78,14 @@ function AppHeader({exploreNearby,searchPage,query}) {
                                 isSnapTop ? 'text-white' : 'text-primary'
                                 } hidden xl:block`}
                                 type={EAppLogo.TEXT}
+                                color={color}
                             />
                             <AppLogo
                                 className={`${
                                 isSnapTop ? 'text-white' : 'text-primary'
                                 } block xl:hidden`}
                                 type={EAppLogo.LOGO}
+                                color={color}
                             />
                             </a>
                         </Link>
@@ -114,6 +132,7 @@ function AppHeader({exploreNearby,searchPage,query}) {
                                 isActiveHeader={isActiveSearch}
                                 active={activeMenu === EHeaderOptions.PLACES_TO_STAY}
                                 onClick={() => setActiveMenu(EHeaderOptions.PLACES_TO_STAY)}
+                                color={color}
                             >
                                 Places to stay
                             </AppHeaderOption>
@@ -122,10 +141,11 @@ function AppHeader({exploreNearby,searchPage,query}) {
                                 isActiveHeader={isActiveSearch}
                                 active={activeMenu === EHeaderOptions.FIND_EXPERIENCES}
                                 onClick={() => setActiveMenu(EHeaderOptions.FIND_EXPERIENCES)}
+                                color={color}
                             >
                                 Experiences
                             </AppHeaderOption>
-                            <AppHeaderOption isSnap={isSnapTop} isActiveHeader={isActiveSearch}>
+                            <AppHeaderOption isSnap={isSnapTop} isActiveHeader={isActiveSearch} color={color}>
                                 <Link href="/" legacyBehavior>
                                     <a>
                                     Online Experiences
@@ -158,9 +178,15 @@ function AppHeader({exploreNearby,searchPage,query}) {
                             <GlobeAltIcon className="h-5" />
                         </a>
                         </Link>
-                        <button className="flex items-center pl-3 pr-1 bg-white border border-gray-200 rounded-full h-11 hover:shadow-md">
-                        <MenuIcon className="h-5 mr-2 text-gray-300" />
-                        <UserCircleIcon className="h-10 text-gray-300" />
+                        <button className="flex items-center pl-3 pr-1 bg-white border border-gray-200 rounded-full h-11 hover:shadow-md" onClick={(e) => router.push('/user')}>
+                        {/* <MenuIcon className="h-5 mr-2 text-gray-300" />
+                        <UserCircleIcon className="h-10 text-gray-300" /> */}
+                            Hello {user?.firstname}
+                        </button>
+                        <button className="flex items-center pl-3 pr-1 bg-white border border-gray-200 rounded-full h-11 hover:shadow-md" onClick={(e) => {logout()}}>
+                        {/* <MenuIcon className="h-5 mr-2 text-gray-300" />
+                        <UserCircleIcon className="h-10 text-gray-300" /> */}
+                            Logout
                         </button>
                     </div>
                 </div>

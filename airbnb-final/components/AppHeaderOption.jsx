@@ -7,6 +7,7 @@ const AppHeaderOption = ({
     isSnap,
     isActiveHeader,
     onClick,
+    color
   }) => {
     const headerMenuBehavior = () => {
       let style = [];
@@ -19,6 +20,7 @@ const AppHeaderOption = ({
   
     return (
       <span
+        style={{color: color}}
         className={`${headerMenuBehavior()} ${
           active ? 'after:w-5' : 'hover:after:w-1'
         } relative px-4 my-3 pb-2 cursor-pointer after:absolute after:bottom-0 after:right-1/2 after:translate-x-1/2 after:h-[2px] after:rounded-full`}
