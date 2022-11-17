@@ -20,9 +20,11 @@ function TestCard() {
         // Currently clicking on a carousel as well as next arrow we are redirected to the property page
         //Since anchor tag is a parent div we have to disable this behaviour when we click on arrows.
     }
+    
     const renderedProperties =Object.values(properties).map((property)=>{
 
         const images = property.images;
+        console.log(property);
         // const images = [];
 
         return (
