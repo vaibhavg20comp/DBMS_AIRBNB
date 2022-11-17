@@ -485,18 +485,23 @@ app.post('/becomeHost',async(req,res)=>{
 		}
 	});
 	const images = formres[7].response;
-	for (let image in images){
+	console.log(images);
+	images.forEach((image) => {
 		const img_id=uuid.v4();
-		const url = image.secure_url;
+		console.log("Hello");
+		console.log(image);
+		const url = image.url;
+		console.log("493",url);
 		const insert_img= `insert into property_has_images values('${img_id}','${propid}','${url}','')`;
 		// run above query
+		console.log(insert_img);
 		db3.query(insert_img,(err)=>{
 			if(err){
 				console.log(err);
 			}
 		});
-	}
-	for(let rule in rules){
+	})
+	rules.forEach((rule) => {
 		const insert_rule = `insert into has_rules values('${propid}','${rule}','')`;
 		// insert
 		db3.query(insert_rule,(err)=>{
@@ -504,8 +509,8 @@ app.post('/becomeHost',async(req,res)=>{
 				console.log(err);
 			}
 		});
-	}
-	for(let amenity in amenities){
+	})
+	amenities.forEach((amenity) => {
 		const insert_amenity = `insert into has_amenity values('${propid}','${amenity}','')`;
 		// insert
 		db3.query(insert_amenity,(err)=>{
@@ -513,7 +518,7 @@ app.post('/becomeHost',async(req,res)=>{
 				console.log(err);
 			}
 		});
-	}
+	})
 	res.status(200).send('');
 	const insert_has_property = `insert into has_property values('${propid}','${user_id}')`;
 	db3.query(insert_has_property,(err)=>{
