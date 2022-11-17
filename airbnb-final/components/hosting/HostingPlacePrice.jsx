@@ -26,7 +26,7 @@ function HostingPlacePrice({setResponse}) {
       onChange={e=>{
         console.log(e.target.value)
         setValue(e.target.value)
-        setResponse(value)
+        setResponse({price_per_night:value})
       }}
       placeholder={'₹00'}
       />

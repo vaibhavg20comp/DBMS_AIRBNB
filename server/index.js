@@ -37,6 +37,13 @@ const db2=mysql2.createConnection({
 	socketPath:'/var/run/mysqld/mysqld.sock',
 	timezone: 'Z',
 });
+const db3=mysql.createConnection({
+	host:'localhost',
+        database:'db',
+        user:'root',
+        password:'Wf@MNAkj9tyL',
+        socketPath:'/var/run/mysqld/mysqld.sock'
+});
 
 app.post("/api/login", (req,res) => {
     const email = req.body.email;
@@ -457,16 +464,16 @@ app.post('/becomeHost',async(req,res)=>{
 	const user_id=(req.body.user_id);
 	const formres=(req.body.FormResponse);
 	const addrid=uuid.v4();
-	const {addressLine,city,state,country,zip} = formres[4].response ;
+	const {addressLine,city,state,country,zip} = formres[3].response ;
 	const insertAddr= `insert into address values('${addrid}','${addressLine}','${city}','${state}','${country}','${zip}')`
 	const propid=uuid.v4();
-	const property_title = formres[9].response;
-	const {property_description}  = formres[10].response;
-	const price = formres[11].response;
-	const rules = formres[7].response;
-	const amenities= formres[6].response;
+	const property_title = formres[8].response;
+	const {property_description}  = formres[9].response;
+	const {price_per_night} = formres[10].response;
+	const rules = formres[6].response;
+	const amenities= formres[5].response;
 	const {guests,beds,bedrooms,bathrooms} = formres[4].response;
-	const insertprop = `insert into property values ('${propid}','${property_title}','${addrid}','${bedrooms}','${beds}','${bathrooms}','${price}',1,now(),'2022-12-12','${property_description}','${guests}')`;
+	const insertprop = `insert into property values ('${propid}','${property_title}','${addrid}','${bedrooms}','${beds}','${bathrooms}','${price_per_night}',1,now(),'2022-12-12','${property_description}','${guests}')`;
 	db3.query(insertAddr,(err)=>{
 		if(err){
 			console.log(err);
@@ -477,7 +484,7 @@ app.post('/becomeHost',async(req,res)=>{
 			console.log(err);
 		}
 	});
-	const images = formres[8].response;
+	const images = formres[7].response;
 	for (let image in images){
 		const img_id=uuid.v4();
 		const url = image.secure_url;
@@ -492,14 +499,14 @@ app.post('/becomeHost',async(req,res)=>{
 	for(let rule in rules){
 		const insert_rule = `insert into has_rules values('${propid}','${rule}','')`;
 		// insert
-		db3.query(insertrule,(err)=>{
+		db3.query(insert_rule,(err)=>{
 			if(err){
 				console.log(err);
 			}
 		});
 	}
 	for(let amenity in amenities){
-		const insert_amenity = `insert into has_amenities values('${propid}','${amenity}','')`;
+		const insert_amenity = `insert into has_amenity values('${propid}','${amenity}','')`;
 		// insert
 		db3.query(insert_amenity,(err)=>{
 			if(err){
