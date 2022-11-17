@@ -5,7 +5,7 @@ function HouseRules({items,setResponse}) {
   return (
     <div className='grid gap-4 m-[3rem] w-[35rem] md:grid-cols-3'>
       {
-        items.map((item,index)=>(
+        items?.map((item,index)=>(
           <div key={index} className='w-[11rem] h-[9rem]'>
                   <input type="checkbox" id={item.id} className='hidden peer'
                   onChange={(e)=>{

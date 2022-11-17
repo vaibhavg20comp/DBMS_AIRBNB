@@ -34,7 +34,8 @@ const db2=mysql2.createConnection({
 	database:process.env.DATABASE,
 	user:'root',
 	password:process.env.PASSWORD,
-	timezone: 'Z'
+	socketPath:'/var/run/mysqld/mysqld.sock',
+	timezone: 'Z',
 });
 
 app.post("/api/login", (req,res) => {
@@ -432,23 +433,15 @@ app.post("/deleteProperty",async (req,res)=>{
 	})
 })
 
+
 app.get('/showproperty',(req,res)=>{
-	const query1 = `select p.property_id,p.price_per_night,p.av_from_date,p.av_to_date,
-					i.image_id,i.image_url,a.city,a.country
-					from property p
-					join property_has_images i
-					on p.property_id = i.property_id
-					join address a
-					on p.addr_id = a.addr_id`;
 	const query2= `SELECT p.property_id,p.price_per_night,p.av_from_date,p.av_to_date,i.images,a.city,a.country 
 				   from property p
 			       JOIN (SELECT property_id,JSON_ARRAYAGG(JSON_OBJECT('image_id',image_id,'url',image_url)) as images from property_has_images group by property_id) as i
 				   ON p.property_id=i.property_id
 				   JOIN address a
 				   ON p.addr_id = a.addr_id`;
-	const query3 = `select json_arrayagg(json_object('image',image_id)) as json from property_has_images`;
-	const query4=`SELECT JSON_ARRAY(1, "abc", NULL, TRUE, CURTIME()) as  newarray`;
-	db.query(query2,(err,results)=>{
+	db3.query(query2,(err,results)=>{
 		if(err){
 			console.log(err);
 		}else{
@@ -459,9 +452,69 @@ app.get('/showproperty',(req,res)=>{
 });
 
 
-app.post('/becomeHost',(req,res)=>{
+app.post('/becomeHost',async(req,res)=>{
 	console.log(req.body.FormResponse);
+	const user_id=(req.body.user_id);
+	const formres=(req.body.FormResponse);
+	const addrid=uuid.v4();
+	const {addressLine,city,state,country,zip} = formres[4].response ;
+	const insertAddr= `insert into address values('${addrid}','${addressLine}','${city}','${state}','${country}','${zip}')`
+	const propid=uuid.v4();
+	const property_title = formres[9].response;
+	const {property_description}  = formres[10].response;
+	const price = formres[11].response;
+	const rules = formres[7].response;
+	const amenities= formres[6].response;
+	const {guests,beds,bedrooms,bathrooms} = formres[4].response;
+	const insertprop = `insert into property values ('${propid}','${property_title}','${addrid}','${bedrooms}','${beds}','${bathrooms}','${price}',1,'${av_from}',${av_to}','${property_description}','${guests}')`;
+	db3.query(insertAddr,(err)=>{
+		if(err){
+			console.log(err);
+		}
+	});
+	db3.query(insertprop,(err)=>{
+		if(err){
+			console.log(err);
+		}
+	});
+	const images = formres[8].response;
+	for (let image in images){
+		const img_id=uuid.v4();
+		const url = image.secure_url;
+		const insert_img= `insert into property_has_images values('${img_id}','${propid}','${url}','')`;
+		// run above query
+		db3.query(insert_img,(err)=>{
+			if(err){
+				console.log(err);
+			}
+		});
+	}
+	for(let rule in rules){
+		const insert_rule = `insert into has_rules values('${propid}','${rule}','')`;
+		// insert
+		db3.query(insertrule,(err)=>{
+			if(err){
+				console.log(err);
+			}
+		});
+	}
+	for(let amenity in amenities){
+		const insert_amenity = `insert into has_amenities values('${propid}','${amenity}','')`;
+		// insert
+		db3.query(insert_amenity,(err)=>{
+			if(err){
+				console.log(err);
+			}
+		});
+	}
 	res.status(200).send('');
+	const insert_has_property = `insert into has_property values('${propid}','${user_id}')`;
+	db3.query(insert_has_property,(err)=>{
+		if(err){
+			console.log(err);
+		}
+	});
+
 })
 
 app.listen(3003,()=>{

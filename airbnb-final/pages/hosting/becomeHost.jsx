@@ -24,6 +24,12 @@ export default function becomeHost() {
   const [id,setId] = useState(0);
   const [response,setResponse] = useState(null);
   const [buttondisable,setButtondisable] =useState(true);
+  const [userId, setUserId] = useState("");
+  useEffect(() => {
+      if (typeof window!=='undefined'){
+        setUserId(JSON.parse(sessionStorage.getItem('user_info')).user_id)
+      }
+    }, []);
   const onclick=()=>{
     
     FormResponse.push({id,response})
@@ -39,7 +45,7 @@ export default function becomeHost() {
     setId((c)=>FormResponse.length<=formQuestionsData.length ? (c+1):c);
     setResponse(null);
     setButtondisable(true)
-    Axios.post('http://localhost:3003/becomeHost',{FormResponse});
+    Axios.post('http://localhost:3003/becomeHost',{FormResponse,user_id:userId});
   }
 
   const onclickBack=()=>{
