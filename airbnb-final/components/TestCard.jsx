@@ -4,9 +4,11 @@ import axios from "axios";
 import Link from  'next/link';
 import Image from 'next/image';
 import { Carousel } from "flowbite-react";
+import { useRouter } from 'next/router';
 
 function TestCard() {
     const [properties,setProperties] = useState({});
+    const router = useRouter();
     const fetchProperties = async ()=>{
         const res = await axios.get('http://localhost:3003/showproperty');
         setProperties(res.data);
@@ -26,14 +28,18 @@ function TestCard() {
         // const images = [];
 
         return (
-            <Link legacyBehavior key={property.property_id} href="#!">
-                <a>
+                <a onClick={(e) => {router.push({
+                    pathname: '/property',
+                    query:{
+                        property_id:property.property_id
+                    }
+                })}}>
                 <div className="p-2 duration-300 lg:p-3 gap-y-4 active:scale-105 active:bg-gray-200 active:bg-opacity-40 rounded-xl">
                     <div className="relative w-full h-40 mb-2 md:h-60 lg:h-72">
                         <Carousel slide = {false}>
                             {
                                 images.map(img=>(
-                                    <img key= {img.image_id} src={img.url} alt="..." className='carousel'/>
+                                    <img key= {img.image_id} src={img.url==='undefined'?"images/airbnb2.webp":img.url} alt="..." className='carousel'/>
                                 ))
                             }
                         </Carousel>
@@ -51,7 +57,6 @@ function TestCard() {
                     </div>
                 </div>
             </a>
-            </Link>
         )
     });
     return <>
