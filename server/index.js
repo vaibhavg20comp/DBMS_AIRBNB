@@ -466,7 +466,7 @@ app.post('/becomeHost',async(req,res)=>{
 	const rules = formres[7].response;
 	const amenities= formres[6].response;
 	const {guests,beds,bedrooms,bathrooms} = formres[4].response;
-	const insertprop = `insert into property values ('${propid}','${property_title}','${addrid}','${bedrooms}','${beds}','${bathrooms}','${price}',1,'${av_from}',${av_to}','${property_description}','${guests}')`;
+	const insertprop = `insert into property values ('${propid}','${property_title}','${addrid}','${bedrooms}','${beds}','${bathrooms}','${price}',1,now(),'2022-12-12','${property_description}','${guests}')`;
 	db3.query(insertAddr,(err)=>{
 		if(err){
 			console.log(err);
